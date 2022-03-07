@@ -1,4 +1,4 @@
-defmodule Vektor.Runtime.VXL_Parser do
+defmodule VXLParser do
   use Rustler, otp_app: :vxl_parser, crate: :vxl_elixir
 
   @doc """
