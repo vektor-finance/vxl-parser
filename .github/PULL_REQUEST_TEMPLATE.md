@@ -1,7 +1,3 @@
-**Project**: backend/data/ops/vektor-js/vxl-parser
-
-**Notion**: [Link](https://www.notion.so/vektorfinance/...)
-
 ### Motivation
 
 <!--
@@ -29,5 +25,4 @@ Skip if trivial change.
 - [ ] I've confirmed that my PR passes all linting checks
 - [ ] I've included test cases
 - [ ] I've updated the documentation
-- [ ] I've re-generated OpenAPI specs
 - [ ] I've add `reviewers` where systems they are responsible for is impacted
