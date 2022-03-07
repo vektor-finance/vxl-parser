@@ -4,10 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    paths:
-      - 'vxl-parser/**'
-      - '.github/workflows/vxl-parser.yml'
-      - '!**.md'
 
 env:
   CARGO_TERM_COLOR: always
