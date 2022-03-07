@@ -25,7 +25,7 @@ defmodule VXLParser.MixProject do
       name: "vxl_parser",
       maintainers: ["Vektor <engineering@vektor.finance>"],
       links: %{Github: "https://github.com/vektor-finance/vxl-parser/elixir"},
-      files: ["elixir", "mix.exs"]
+      files: ["lib", "native", "mix.exs"]
     ]
 
   defp rustler_crates do
