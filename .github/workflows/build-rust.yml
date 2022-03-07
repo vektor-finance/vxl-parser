@@ -1,4 +1,4 @@
-name: 'vxl-parser'
+name: Build Rust
 
 on:
   pull_request:

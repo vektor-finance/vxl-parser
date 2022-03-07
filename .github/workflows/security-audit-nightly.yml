@@ -1,6 +1,6 @@
 # Disabled: can't specify cargo path - https://github.com/actions-rs/audit-check/issues/116
 
-name: 'vxl-parser: security audit (nightly)'
+name: Security Audit (nightly)
 
 on:
   schedule:
@@ -14,7 +14,3 @@ jobs:
 
       - name: Audit
         uses: actions-rs/audit-check@v1
-        with:
-          # Not accepted right now
-          args: --manifest-path Cargo.toml
-          token: ${{ secrets.GITHUB_TOKEN }}
