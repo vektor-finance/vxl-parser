@@ -1,0 +1,13 @@
+.DS_Store
+
+# Rust
+target/
+pkg/
+.cargo
+# Cargo.lock
+
+
+# Elixir
+.elixir_ls
+_build/
+deps/
