@@ -1,7 +1,7 @@
 # 🦔 vxl-parser
 
-[![vxl-parser](https://github.com/vektor-finance/vxl-parser/actions/workflows/vxl-parser.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/vxl-parser.yml)
-[![vxl-parser: security audit (nightly)](https://github.com/vektor-finance/vxl-parser/actions/workflows/vxl-parser-security-audit-nightly.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/vxl-parser-security-audit-nightly.yml)
+[![vxl-parser](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-rust.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-rust.yml)
+[![vxl-parser: security audit (nightly)](https://github.com/vektor-finance/vxl-parser/actions/workflows/security-audit-nightly.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/security-audit-nightly.yml)
 
 [![Minimum rustc version](https://img.shields.io/badge/rustc-1.49.0+-lightgray.svg)](#rust-version-requirements)
 

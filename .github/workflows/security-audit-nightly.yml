@@ -1,0 +1,20 @@
+# Disabled: can't specify cargo path - https://github.com/actions-rs/audit-check/issues/116
+
+name: 'vxl-parser: security audit (nightly)'
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Audit
+        uses: actions-rs/audit-check@v1
+        with:
+          # Not accepted right now
+          args: --manifest-path Cargo.toml
+          token: ${{ secrets.GITHUB_TOKEN }}
