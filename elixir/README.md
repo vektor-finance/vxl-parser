@@ -4,7 +4,7 @@
 def deps do
   [
     {:vxl_parser,
-       git: "git@github.com:vektor-finance/vxl-parser.git", branch: "master", sparse: "elixir"},
+       git: "git@github.com:vektor-finance/vxl-parser.git", branch: "main", sparse: "elixir"},
   ]
 end
 ```
