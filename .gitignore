@@ -1,0 +1,18 @@
+.DS_Store
+
+# Rust
+target/
+pkg/
+.cargo
+# Cargo.lock
+
+# JavaScript
+node_modules/
+
+# Elixir
+.elixir_ls
+_build/
+deps/
+
+# IDE
+.vscode

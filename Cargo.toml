@@ -1,0 +1,11 @@
+[workspace]
+
+members = [
+    "core",
+    "cli",
+    "js",
+    "elixir"
+]
+
+[profile.release]
+opt-level = 3

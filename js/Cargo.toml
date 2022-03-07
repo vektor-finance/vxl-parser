@@ -1,0 +1,60 @@
+[package]
+name = "js"
+version = "0.0.2"
+authors = ["Akram Hussein <akram@vektor.finance>"]
+edition = "2018"
+homepage = "https://vektor.finance"
+repository = "https://github.com/vektor-finance/vektor.git"
+description = "VXL parser WASM JS wrapper"
+license = "UNLICENSED"
+include = [
+    "CHANGELOG.md",
+    "README.md",
+    ".gitignore",
+    "Cargo.toml",
+    "src/*.rs",
+    "src/*/*.rs",
+    "tests/*.rs",
+    "build.rs"
+]
+
+[lib]
+name = "vxl_wasm"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies.core]
+path = "../core"
+
+
+[dependencies]
+wasm-bindgen = { version = "0.2.79", features = ["serde-serialize"] }
+web-sys = { version = "0.3.56", features = ["console"] }
+serde-wasm-bindgen = "0.4.2"
+
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
+
+# `wee_alloc` is a tiny allocator for wasm that is only ~1K in code size
+# compared to the default allocator's ~10K. It is slower than the default
+# allocator, however.
+#
+# Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
+wee_alloc = { version = "0.4.5", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.29"
+
+[build-dependencies]
+anyhow = "1.0.53"
+vergen = { version = "6.0.2", default-features = false, features = ["build", "cargo", "git"] }
+
+# Disable wasm-opt to support M1 Mac
+[package.metadata.wasm-pack.profile.dev]
+wasm-opt = false

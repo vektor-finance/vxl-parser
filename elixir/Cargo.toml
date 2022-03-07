@@ -1,0 +1,36 @@
+[package]
+name = "elixir"
+version = "0.0.2"
+authors = ["Akram Hussein <akram@vektor.finance>"]
+edition = "2018"
+homepage = "https://vektor.finance"
+repository = "https://github.com/vektor-finance/vektor.git"
+description = "Vektor's VXL parser - Elixir NIF"
+license = "UNLICENSED"
+
+include = [
+  "CHANGELOG.md",
+  "README.md",
+  ".gitignore",
+  "Cargo.toml",
+  "src/*.rs",
+  "src/*/*.rs",
+  "tests/*.rs",
+  "build.rs"
+]
+
+[lib]
+name = "vxl_elixir"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.22.0"
+serde_json = "1.0.59"
+
+[dependencies.core]
+path = "../core"
+
+[build-dependencies]
+anyhow = "1.0.53"
+vergen = { version = "6.0.2", default-features = false, features = ["build", "cargo", "git"] }
