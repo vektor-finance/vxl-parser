@@ -36,21 +36,16 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
-          args: --manifest-path Cargo.toml
         continue-on-error: true
 
       - name: Rustfmt
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-          args: --manifest-path Cargo.toml --all -- --check
         continue-on-error: true
 
       - name: Clippy check
         uses: actions-rs/clippy-check@v1
-        with:
-          args: --manifest-path Cargo.toml
-          token: ${{ secrets.GITHUB_TOKEN }}
 
   test:
     name: 'Test'
@@ -78,7 +73,6 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --manifest-path Cargo.toml
 
   build:
     name: 'Build'
@@ -105,7 +99,6 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --manifest-path Cargo.toml
 
   wasm_pack:
     name: 'Build WASM module'
@@ -164,4 +157,3 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: bench
-          args: --manifest-path Cargo.toml
