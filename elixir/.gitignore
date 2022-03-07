@@ -3,7 +3,6 @@
 # Rust
 target/
 pkg/
-.cargo
 # Cargo.lock
 
 

@@ -3,7 +3,7 @@
 # Rust
 target/
 pkg/
-.cargo
+
 # Cargo.lock
 
 # JavaScript
