@@ -10,7 +10,7 @@
 - **Purpose**: VXL parser library
 - **Technologies**: [Rust](https://www.rust-lang.org/) with [nom](https://github.com/Geal/nom)
 - **Deployment**: Compiled at build-time by other projects
-- **Where**: [app](/app/package.json) and [vektor backend](/backend/mix.exs)
+- **Where**: [app](https://github.com/vektor-finance/app) and [vektor backend](https://github.com/vektor-finance/vektor)
 
 ## Background
 
@@ -46,7 +46,7 @@ It is **not** responsible for aspects such as:
 - `/core` - parsing library
 - `/cli` - CLI app e.g. `cat test.vxl | ./vxl`
 - `/js` - JavaScript wrapper library
-- `/elixir` - Eliir NIF
+- `/elixir` - Elixir NIF
 
 ## Building crates
 
