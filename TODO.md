@@ -19,7 +19,6 @@
 ## JS
 
 - [ ] Fix error handling
-- [ ] Add CI build job
 - [ ] Add CI test job
 
 ## Specification
