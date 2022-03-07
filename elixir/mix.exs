@@ -17,6 +17,7 @@ defmodule VXLParser.MixProject do
 
   defp deps,
     do: [
+      {:jason, "~> 1.0"},
       {:rustler, "== 0.22.0"}
     ]
 
@@ -25,13 +26,13 @@ defmodule VXLParser.MixProject do
       name: "vxl_parser",
       maintainers: ["Vektor <engineering@vektor.finance>"],
       links: %{Github: "https://github.com/vektor-finance/vxl-parser/elixir"},
-      files: ["elixir", "mix.exs"]
+      files: ["lib", "native", "mix.exs", "README.md"]
     ]
 
   defp rustler_crates do
     [
       vxl_elixir: [
-        path: "elixir",
+        path: "vxl_elixir",
         mode: rustc_mode(Mix.env())
       ]
     ]
