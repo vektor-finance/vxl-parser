@@ -32,7 +32,7 @@ defmodule VXLParser.MixProject do
   defp rustler_crates do
     [
       vxl_elixir: [
-        path: "elixir",
+        path: "vxl_elixir",
         mode: rustc_mode(Mix.env())
       ]
     ]
