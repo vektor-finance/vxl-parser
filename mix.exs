@@ -7,21 +7,26 @@ defmodule VXLParser.MixProject do
     [
       app: :vxl_parser,
       version: @version,
-      elixir: "~> 1.9",
-      name: "vxl-parser",
+      elixir: "~> 1.13",
       description: "VXL Parser for Elixir using Rust NIF",
-      deps: [
-        {:rustler, "== 0.22.0"}
-      ],
-      package: [
-        name: "vxl_parser",
-        maintainers: ["Vektor <engineering@vektor.finance>"],
-        links: %{Github: "https://github.com/vektor-finance/vxl-parser/elixir"},
-        files: ["elixir", "mix.exs"]
-      ],
+      deps: deps(),
+      package: package(),
       rustler_crates: rustler_crates()
     ]
   end
+
+  defp deps,
+    do: [
+      {:rustler, "== 0.22.0"}
+    ]
+
+  defp package,
+    do: [
+      name: "vxl_parser",
+      maintainers: ["Vektor <engineering@vektor.finance>"],
+      links: %{Github: "https://github.com/vektor-finance/vxl-parser/elixir"},
+      files: ["elixir", "mix.exs"]
+    ]
 
   defp rustler_crates do
     [
