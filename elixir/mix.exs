@@ -17,6 +17,7 @@ defmodule VXLParser.MixProject do
 
   defp deps,
     do: [
+      {:jason, "~> 1.0"},
       {:rustler, "== 0.22.0"}
     ]
 
