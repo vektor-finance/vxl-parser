@@ -1,0 +1,161 @@
+name: Build
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check_format_and_clippy:
+    name: 'Check, format & clippy'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          # - 1.49.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          override: true
+          components: rustfmt, clippy
+
+      - name: Restore dependencies cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+        continue-on-error: true
+
+      - name: Rustfmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+        continue-on-error: true
+
+      - name: Clippy check
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    name: 'Test'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          # - 1.49.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          override: true
+
+      - name: Restore dependencies cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  build:
+    name: 'Build'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          # - 1.49.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          override: true
+
+      - name: Restore dependencies cache
+        uses: Swatinem/rust-cache@v1
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+
+  wasm_pack:
+    name: 'Build WASM module'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          # - 1.49.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          override: true
+
+      - name: Restore dependencies cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Install wasm-pack
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --version 0.10.2 wasm-pack
+
+      - name: Build WASM JS wrapper
+        run: wasm-pack build --dev --scope=vektor-finance js
+
+  benchmark:
+    name: 'Benchmark'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          # - 1.49.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          override: true
+
+      - name: Restore dependencies cache
+        uses: Swatinem/rust-cache@v1
+
+      - name: Benchmark
+        uses: actions-rs/cargo@v1
+        with:
+          command: bench
