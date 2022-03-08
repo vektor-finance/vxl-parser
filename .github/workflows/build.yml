@@ -36,13 +36,11 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: check
-        continue-on-error: true
 
       - name: Rustfmt
         uses: actions-rs/cargo@v1
         with:
           command: fmt
-        continue-on-error: true
 
       - name: Clippy check
         uses: actions-rs/clippy-check@v1
