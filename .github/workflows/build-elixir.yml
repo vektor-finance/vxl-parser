@@ -81,6 +81,11 @@ jobs:
       - name: Check formatting
         run: mix format --check-formatted
 
+      - name: Run Credo
+        id: credo
+        if: github.event_name == 'pull_request'
+        run: mix credo suggest --min-priority normal --config-file=.credo.exs --format=oneline
+
       - name: Run tests
         id: tests
-        run: mix test
+        run: mix coveralls

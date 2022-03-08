@@ -11,14 +11,17 @@ defmodule VXLParser.MixProject do
       elixir: "~> 1.13",
       deps: deps(),
       package: package(),
-      rustler_crates: rustler_crates()
+      rustler_crates: rustler_crates(),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
   defp deps,
     do: [
       {:jason, "~> 1.0"},
-      {:rustler, "== 0.22.0"}
+      {:rustler, "== 0.22.0"},
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.13", only: [:test], runtime: false}
     ]
 
   defp package,
