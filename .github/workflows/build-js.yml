@@ -41,4 +41,4 @@ jobs:
           args: --version ${{ matrix.wasm-pack }} wasm-pack
 
       - name: Test
-        run: wasm-pack test --node --firefox --chrome --safari --headless js
+        run: wasm-pack test --node --firefox --chrome --headless js
