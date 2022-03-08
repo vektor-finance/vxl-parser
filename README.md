@@ -45,8 +45,8 @@ It is **not** responsible for aspects such as:
 
 - `/core` - parsing library
 - `/cli` - CLI app e.g. `cat test.vxl | ./vxl`
-- `/js` - JavaScript wrapper library
-- `/elixir` - Elixir NIF
+- `/js` - JavaScript WASM library
+- `/elixir` - Elixir NIF library
 
 ## Building crates
 
