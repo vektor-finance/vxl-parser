@@ -1,6 +1,6 @@
 [package]
 name = "js"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["Akram Hussein <akram@vektor.finance>"]
 edition = "2018"
 homepage = "https://vektor.finance"
