@@ -25,7 +25,7 @@ defmodule VXLParser.MixProject do
     do: [
       name: "vxl_parser",
       maintainers: ["Vektor <engineering@vektor.finance>"],
-      links: %{Github: "https://github.com/vektor-finance/vxl-parser/elixir"},
+      links: %{Github: "https://github.com/vektor-finance/vxl-parser"},
       files: ["lib", "native", "mix.exs", "README.md"]
     ]
 
