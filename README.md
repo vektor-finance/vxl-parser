@@ -83,13 +83,13 @@ cargo test
 Omit `--headless` to test interactively
 
 ```bash
-wasm-pack test js --chrome --safari --firefox --headless
+wasm-pack test --chrome --safari --firefox --headless js
 ```
 
 ### Node testing
 
 ```bash
-wasm-pack test js --node
+wasm-pack test --node js
 ```
 
 ### Benchmarking
@@ -106,7 +106,9 @@ See [TODO](TODO.md)
 
 ### vxl-parser WASM module packing process
 
-Currently, we compile and package the `vxl-parser` using `wasm-pack` which works but has some brittle steps that could be improved. Currently we are required to rename the package in outputted `package.json` (for convenience sake but necessarily required).
+Currently, we compile and package the `vxl-parser` using `wasm-pack` which works but has some brittle steps that could be improved.
+
+We rename the package in the outputted `package.json` during a publish step (for convenience sake but necessarily required).
 
 ### Optimisations
 
