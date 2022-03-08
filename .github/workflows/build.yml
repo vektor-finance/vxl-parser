@@ -1,4 +1,4 @@
-name: Build
+name: Build Rust
 
 on:
   pull_request:
@@ -99,37 +99,6 @@ jobs:
       - uses: actions-rs/cargo@v1
         with:
           command: build
-
-  wasm_pack:
-    name: 'Build WASM module'
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        rust:
-          - stable
-          # - 1.49.0
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: ${{ matrix.rust }}
-          override: true
-
-      - name: Restore dependencies cache
-        uses: Swatinem/rust-cache@v1
-
-      - name: Install wasm-pack
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: --version 0.10.2 wasm-pack
-
-      - name: Build WASM JS wrapper
-        run: wasm-pack build --dev --scope=vektor-finance js
 
   benchmark:
     name: 'Benchmark'
