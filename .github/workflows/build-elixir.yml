@@ -15,7 +15,7 @@ defaults:
 
 jobs:
   build:
-    name: Build &`` test
+    name: Build & test
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
