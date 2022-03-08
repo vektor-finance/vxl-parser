@@ -56,10 +56,6 @@ jobs:
           - stable
         wasm-pack:
           - "0.10.2"
-        platform:
-          - node
-          - firefox --headless
-          - chrome --headless
 
     steps:
       - name: Checkout
@@ -79,7 +75,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: install
-          args: --version ${{ matrix.wasm-pack }}  wasm-pack
+          args: --version ${{ matrix.wasm-pack }} wasm-pack
 
       - name: Test
-        run: wasm-pack test --${{ matrix.platform }} js
+        run: wasm-pack test --node --firefox --chrome --safari --headless js
