@@ -9,42 +9,6 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        rust:
-          - stable
-        wasm-pack:
-          - "0.10.2"
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: ${{ matrix.rust }}
-          override: true
-
-      - name: Restore dependencies cache
-        uses: Swatinem/rust-cache@v1
-
-      - name: Install wasm-pack
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: --version ${{ matrix.wasm-pack }}  wasm-pack
-
-      - name: Build WASM JS wrapper
-        run: wasm-pack build --dev --scope=vektor-finance js
-
-      # TODO: Cache build
-
   test:
     name: Test
     runs-on: ubuntu-latest
