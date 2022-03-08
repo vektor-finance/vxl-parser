@@ -7,8 +7,8 @@ defmodule VXLParser.MixProject do
     [
       app: :vxl_parser,
       version: @version,
-      elixir: "~> 1.13",
       description: "VXL Parser for Elixir using Rust NIF",
+      elixir: "~> 1.13",
       deps: deps(),
       package: package(),
       rustler_crates: rustler_crates()
