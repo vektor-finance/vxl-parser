@@ -14,8 +14,8 @@ defaults:
     working-directory: elixir
 
 jobs:
-  build_check_test_analyze:
-    name: "Build, format, lint, test"
+  build:
+    name: Build &`` test
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -63,8 +63,6 @@ jobs:
 
       - name: Restore Cargo dependencies cache
         uses: Swatinem/rust-cache@v1
-        with:
-          working-directory: vxl-parser
 
       - name: Instal dependencies
         if: steps.deps_cache.outputs.cache-hit != 'true'
@@ -81,15 +79,8 @@ jobs:
         run: mix compile
 
       - name: Check formatting
-        if: github.event_name == 'pull_request'
         run: mix format --check-formatted
-
-      - name: Run Credo
-        id: credo
-        if: github.event_name == 'pull_request'
-        run: mix credo suggest --min-priority normal --config-file=.credo.exs --format=oneline
 
       - name: Run tests
         id: tests
-        if: github.event_name == 'pull_request'
-        run: mix coveralls
+        run: mix test
