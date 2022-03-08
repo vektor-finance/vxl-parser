@@ -64,7 +64,7 @@ jobs:
       - name: Restore Cargo dependencies cache
         uses: Swatinem/rust-cache@v1
 
-      - name: Insta;l dependencies
+      - name: Install dependencies
         # if: steps.deps_cache.outputs.cache-hit != 'true'
         run: |
           mix local.rebar --force
