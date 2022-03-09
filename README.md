@@ -5,7 +5,7 @@
 [![javascript](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-js.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-js.yml)
 [![security audit (nightly)](https://github.com/vektor-finance/vxl-parser/actions/workflows/security-audit-nightly.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/security-audit-nightly.yml)
 
-[![Minimum rustc version](https://img.shields.io/badge/rustc-1.49.0+-lightgray.svg)](#rust-version-requirements)
+[![minimum rustc version](https://img.shields.io/badge/rustc-1.49.0+-lightgray.svg)](#rust-version-requirements)
 
 ## Overview
 
