@@ -8,6 +8,7 @@ mod literal;
 mod node;
 mod number;
 mod operation;
+mod comment;
 
 use crate::tracer::get_tracer;
 use address::address;
