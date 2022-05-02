@@ -4,19 +4,19 @@ use std::{error::Error, rc::Rc};
 mod tokens;
 mod address;
 mod collection;
+mod comment;
 mod literal;
 mod node;
 mod number;
 mod operation;
-mod comment;
 
 use crate::tracer::get_tracer;
 use address::address;
 use collection::collection;
+use comment::line_comment;
 use literal::literal;
 use number::number;
 use operation::operation;
-use comment::line_comment;
 
 pub use node::{Node, Tree};
 pub use number::N;
