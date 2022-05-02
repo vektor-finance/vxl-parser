@@ -363,7 +363,7 @@ fn for_loop(i: Span) -> Result {
 
 #[tracable_parser]
 fn expression(i: Span) -> Result {
-  alt((operation, expr_term, line_comment))(i)
+  alt((operation, expr_term))(i)
 }
 
 #[tracable_parser]
@@ -404,7 +404,7 @@ fn file(i: Span) -> OResult {
   let (_, tree) = all_consuming(complete(fold_many1(
     delimited(
       multispace0,
-      expression,
+      alt((expression, line_comment)),
       tuple((space0, alt((tag(";"), eof, recognize(many1(line_ending)))))),
     ),
     Tree::new(),
