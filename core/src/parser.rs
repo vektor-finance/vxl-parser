@@ -782,21 +782,23 @@ mod test {
             vec![node!(function!("fun")), node!(function!("fun2"))]
         ),
         case(
-            "fun();\nfun2() # with comment",
-            vec![node!(function!("fun")), node!(function!("fun2"))]
+            "fun();\nfun2() # comment",
+            vec![node!(function!("fun")), node!(function!("fun2")), node!(line_comment!(" comment"))]
         ),
         case(
-            r#"fun.sub(1, true)
+            r#"fun.sub(1, true) # comment 1
 
-            1 + 3
+            1 + 3 # comment 2
 
-            # a comment
+            # comment 3
 
-            if(2 >= 1, fun2(), fun3(opt=1))"#,
+            if(2 >= 1, fun2(), fun3(opt=1)) # comment 4"#,
             vec![
               node!(function!("fun", "sub", number!(1), boolean!(true))),
+              node!(line_comment!(" comment 1")),
               node!(binary_op!(number!(1), "+", number!(3))),
-              node!(line_comment!(" a comment")),
+              node!(line_comment!(" comment 2")),
+              node!(line_comment!(" comment 3")),
               node!(
                 conditional!(
                   binary_op!(
@@ -808,6 +810,7 @@ mod test {
                   function!("fun3", none, opt!("opt", number!(1)))
                 )
               ),
+              node!(line_comment!(" comment 4")),
             ]
         ),
     )]
