@@ -16,6 +16,7 @@ use collection::collection;
 use literal::literal;
 use number::number;
 use operation::operation;
+use comment::line_comment;
 
 pub use node::{Node, Tree};
 pub use number::N;
@@ -362,7 +363,7 @@ fn for_loop(i: Span) -> Result {
 
 #[tracable_parser]
 fn expression(i: Span) -> Result {
-  alt((operation, expr_term))(i)
+  alt((operation, expr_term, line_comment))(i)
 }
 
 #[tracable_parser]
@@ -781,14 +782,21 @@ mod test {
             vec![node!(function!("fun")), node!(function!("fun2"))]
         ),
         case(
+            "fun();\nfun2() # with comment",
+            vec![node!(function!("fun")), node!(function!("fun2"))]
+        ),
+        case(
             r#"fun.sub(1, true)
 
             1 + 3
+
+            # a comment
 
             if(2 >= 1, fun2(), fun3(opt=1))"#,
             vec![
               node!(function!("fun", "sub", number!(1), boolean!(true))),
               node!(binary_op!(number!(1), "+", number!(3))),
+              node!(line_comment!(" a comment")),
               node!(
                 conditional!(
                   binary_op!(
