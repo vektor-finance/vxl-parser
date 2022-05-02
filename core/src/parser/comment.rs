@@ -23,7 +23,7 @@ mod test {
     case("# this is a comment", line_comment!(" this is a comment")),
     case("#this is a comment   ", line_comment!("this is a comment   ")),
     case("# this is a ✅ comment with 🚀 emoji ", line_comment!(" this is a ✅ comment with 🚀 emoji ")),
-    case("# FOO.BAR(1) ", line_comment!(" FOO.BAR(1) ")),
+    case("#  FOO.BAR(1) ", line_comment!("  FOO.BAR(1) ")),
   )]
   fn test_line_comment(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let input = Span::new_extra(input, info);
