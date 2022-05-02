@@ -1,29 +1,20 @@
-use nom_locate::position;
-use nom::sequence::preceded;
-use nom::multi::many1;
-use nom::character::complete::space0;
-use nom::sequence::tuple;
-use crate::parser::literal::string;
-
 use nom::{
-  branch::alt,
-  bytes::complete::{escaped, is_not, tag, tag_no_case},
-  character::complete::{anychar, char, one_of},
-  combinator::{map, peek},
-  error::ErrorKind,
-  sequence::delimited,
-  Err,
+  bytes::complete::is_not,
+  combinator::map,
+  character::complete::char,
+  sequence::pair,
 };
+
 use nom_tracable::tracable_parser;
 
 use super::{Node, Result, Span, Token};
 
 #[tracable_parser]
-fn line_comment(i: Span) -> Result {
-  let (i, span) = position(i)?;
-  map(preceded(tag_no_case("#"), string), |node| {
-    Node::new(Token::LineComment(node.fragment()), &span)
-  })(i)
+pub fn line_comment(i: Span) -> Result {
+  map(
+    pair(char('#'), is_not("\n\r")),
+    |(_, span): (char, Span)| Node::new(Token::LineComment(String::from(*span.fragment())), &span),
+  )(i)
 }
 
 #[cfg(test)]
@@ -35,9 +26,11 @@ mod test {
   use rstest::rstest;
 
   #[rstest(input, expected,
-        case("# this is a comment", line_comment!("this is a comment")),
-        case("#this is a comment", line_comment!("this is a comment")),
-    )]
+    case("# this is a comment", line_comment!(" this is a comment")),
+    case("#this is a comment   ", line_comment!("this is a comment   ")),
+    case("# this is a ✅ comment with 🚀 emoji ", line_comment!(" this is a ✅ comment with 🚀 emoji ")),
+    case("# FOO.BAR(1) ", line_comment!(" FOO.BAR(1) ")),
+  )]
   fn test_line_comment(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let input = Span::new_extra(input, info);
     let (span, node) = line_comment(input)?;
