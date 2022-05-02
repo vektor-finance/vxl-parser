@@ -746,16 +746,20 @@ mod test {
 
   #[rstest(input, expected,
         case(
-            "fun()",
-            vec![node!(function!("fun"))]
+            "fun() # comment",
+            vec![node!(function!("fun")), node!(line_comment!(" comment"))]
         ),
         case(
             "fun()    ",
             vec![node!(function!("fun"))]
         ),
         case(
-            "fun();",
-            vec![node!(function!("fun"))]
+            "fun(); # comment",
+            vec![node!(function!("fun")), node!(line_comment!(" comment"))]
+        ),
+        case(
+            "fun();#comment",
+            vec![node!(function!("fun")), node!(line_comment!("comment"))]
         ),
         case(
             "fun()    ;",
@@ -782,41 +786,33 @@ mod test {
             vec![node!(function!("fun")), node!(function!("fun2"))]
         ),
         case(
-            "fun();\nfun2() # comment",
-            vec![node!(function!("fun")), node!(function!("fun2")), node!(line_comment!(" comment"))]
+            r#"fun.sub(1, true) # comment 1
+
+            1 + 3 # comment 2
+
+            # comment 3
+
+            if(2 >= 1, fun2(), fun3(opt=1))#comment 4"#,
+            vec![
+              node!(function!("fun", "sub", number!(1), boolean!(true))),
+              node!(line_comment!(" comment 1")),
+              node!(binary_op!(number!(1), "+", number!(3))),
+              node!(line_comment!(" comment 2")),
+              node!(line_comment!(" comment 3")),
+              node!(
+                conditional!(
+                  binary_op!(
+                      number!(2),
+                      ">=",
+                      number!(1)
+                  ),
+                  function!("fun2"),
+                  function!("fun3", none, opt!("opt", number!(1)))
+                )
+              ),
+              node!(line_comment!("comment4")),
+            ]
         ),
-        case(
-            "fun(); # comment",
-            vec![node!(function!("fun")), node!(line_comment!(" comment"))]
-        ),
-        // case(
-        //     r#"fun.sub(1, true) # comment 1
-
-        //     1 + 3 # comment 2
-
-        //     # comment 3
-
-        //     if(2 >= 1, fun2(), fun3(opt=1)) # comment 4"#,
-        //     vec![
-        //       node!(function!("fun", "sub", number!(1), boolean!(true))),
-        //       node!(line_comment!(" comment 1")),
-        //       node!(binary_op!(number!(1), "+", number!(3))),
-        //       node!(line_comment!(" comment 2")),
-        //       node!(line_comment!(" comment 3")),
-        //       node!(
-        //         conditional!(
-        //           binary_op!(
-        //               number!(2),
-        //               ">=",
-        //               number!(1)
-        //           ),
-        //           function!("fun2"),
-        //           function!("fun3", none, opt!("opt", number!(1)))
-        //         )
-        //       ),
-        //       node!(line_comment!(" comment 4")),
-        //     ]
-        // ),
     )]
   fn test_file(input: &'static str, expected: Tree, info: TracableInfo) -> Result {
     let input = Span::new_extra(input, info);
