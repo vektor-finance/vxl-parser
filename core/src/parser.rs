@@ -4,6 +4,7 @@ use std::{error::Error, rc::Rc};
 mod tokens;
 mod address;
 mod collection;
+mod comment;
 mod literal;
 mod node;
 mod number;
@@ -12,6 +13,7 @@ mod operation;
 use crate::tracer::get_tracer;
 use address::address;
 use collection::collection;
+use comment::line_comment;
 use literal::literal;
 use number::number;
 use operation::operation;
@@ -402,7 +404,7 @@ fn file(i: Span) -> OResult {
   let (_, tree) = all_consuming(complete(fold_many1(
     delimited(
       multispace0,
-      expression,
+      alt((expression, line_comment)),
       tuple((space0, alt((tag(";"), eof, recognize(many1(line_ending)))))),
     ),
     Tree::new(),
@@ -747,13 +749,21 @@ mod test {
             "fun()",
             vec![node!(function!("fun"))]
         ),
+        // case(
+        //     "fun() # comment",
+        //     vec![node!(function!("fun")), node!(line_comment!(" comment"))]
+        // ),
         case(
             "fun()    ",
             vec![node!(function!("fun"))]
         ),
         case(
-            "fun();",
-            vec![node!(function!("fun"))]
+            "fun(); # comment",
+            vec![node!(function!("fun")), node!(line_comment!(" comment"))]
+        ),
+        case(
+            "fun();#comment",
+            vec![node!(function!("fun")), node!(line_comment!("comment"))]
         ),
         case(
             "fun()    ;",
@@ -779,6 +789,34 @@ mod test {
             "fun();\nfun2()",
             vec![node!(function!("fun")), node!(function!("fun2"))]
         ),
+        // case(
+        //     r#"fun.sub(1, true) # comment 1
+
+        //     1 + 3 # comment 2
+
+        //     # comment 3
+
+        //     if(2 >= 1, fun2(), fun3(opt=1))#comment 4"#,
+        //     vec![
+        //       node!(function!("fun", "sub", number!(1), boolean!(true))),
+        //       node!(line_comment!(" comment 1")),
+        //       node!(binary_op!(number!(1), "+", number!(3))),
+        //       node!(line_comment!(" comment 2")),
+        //       node!(line_comment!(" comment 3")),
+        //       node!(
+        //         conditional!(
+        //           binary_op!(
+        //               number!(2),
+        //               ">=",
+        //               number!(1)
+        //           ),
+        //           function!("fun2"),
+        //           function!("fun3", none, opt!("opt", number!(1)))
+        //         )
+        //       ),
+        //       node!(line_comment!("comment4")),
+        //     ]
+        // ),
         case(
             r#"fun.sub(1, true)
 
