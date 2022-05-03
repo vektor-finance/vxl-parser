@@ -408,6 +408,7 @@ macro_rules! address {
     Token::Address(String::from($s))
   };
 }
+
 #[macro_export]
 macro_rules! line_comment {
   ($s:expr) => {
