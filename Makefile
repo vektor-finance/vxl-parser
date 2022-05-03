@@ -10,4 +10,4 @@ build-js:
 	sed -i -e 's/"name": "@vektor-finance\/js"/"name": "@vektor-finance\/vxl-parser"/g' "js/pkg/package.json";
 
 publish-js: build-js
-	yarn publish --registry=${NPM_REGISTRY} js/pkg;
+	yarn publish --registry=${NPM_REGISTRY} js/pkg -f;
