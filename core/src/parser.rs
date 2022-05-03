@@ -84,11 +84,14 @@ fn function(i: Span) -> Result {
       delimited(
         char('('),
         opt(tuple((
-          function_arg,
-          many0(preceded(pair(char(','), multispace0), function_arg)),
+          preceded(multispace0, function_arg),
+          many0(preceded(
+            pair(char(','), preceded(multispace0, opt(line_ending))),
+            function_arg,
+          )),
           opt(elipsis),
         ))),
-        char(')'),
+        preceded(multispace0, char(')')),
       ),
     )),
     |(name, subfunction, args)| {
@@ -608,27 +611,27 @@ mod test {
         ),
         case("fun(1, foo=123)", function!("fun", none, number!(1), opt!("foo", number!(123)))),
         case("fun.sub(1.0, foo=fun2.sub(\"thing\", foo2=fun3(false)))",
-            function!(
-                "fun",
-                "sub",
-                number!(1.0),
-                opt!(
-                    "foo",
-                    function!(
-                        "fun2",
-                        "sub",
-                        string!("thing"),
-                        opt!(
-                          "foo2",
-                          function!(
-                              "fun3",
-                              none,
-                              boolean!(false)
-                          )
+          function!(
+              "fun",
+              "sub",
+              number!(1.0),
+              opt!(
+                  "foo",
+                  function!(
+                      "fun2",
+                      "sub",
+                      string!("thing"),
+                      opt!(
+                        "foo2",
+                        function!(
+                            "fun3",
+                            none,
+                            boolean!(false)
                         )
-                    )
-                )
-            )),
+                      )
+                  )
+              )
+          )),
         case("fun.sub(123, foo=321, bar=false, baz=\"a test string\", faz=test)",
           function!(
             "fun",
@@ -654,18 +657,33 @@ mod test {
         case("fun(1 < 2)", function!("fun", none, binary_op!(number!(1), "<", number!(2)))),
         case("fun.sub(1 * 100.0)", function!("fun", "sub", binary_op!(number!(1), "*", number!(100.0)))),
         case("fun.sub(fun2.sub(1 * 100.01) > 100.0)",
-            function!("fun", "sub",
-                binary_op!(
-                     function!("fun2", "sub", binary_op!(number!(1), "*", number!(100.01))),
-                     ">",
-                     number!(100.0))
-                    )
-                ),
+          function!("fun", "sub",
+              binary_op!(
+                    function!("fun2", "sub", binary_op!(number!(1), "*", number!(100.01))),
+                    ">",
+                    number!(100.0))
+                  )
+              ),
         case("fun.sub(if(foo(), true, false))",
-            function!("fun", "sub", conditional!(function!("foo"), boolean!(true), boolean!(false)))
+          function!("fun", "sub", conditional!(function!("foo"), boolean!(true), boolean!(false)))
         ),
         case("fun.sub(foo() ? true : false)",
-            function!("fun", "sub", conditional!(function!("foo"), boolean!(true), boolean!(false)))
+          function!("fun", "sub", conditional!(function!("foo"), boolean!(true), boolean!(false)))
+        ),
+        case(r#"fun.sub(
+          123
+        )"#,
+          function!("fun",  "sub", number!(123))
+        ),
+        case("fun.sub(\n\t123,\n\tfalse,\n\t\"vektor\",\n\tfoo() ? true : false)",
+          function!(
+            "fun",
+            "sub",
+            number!(123),
+            boolean!(false),
+            string!("vektor"),
+            conditional!(function!("foo"), boolean!(true), boolean!(false))
+          )
         ),
     )]
   fn test_function(input: &'static str, expected: Token, info: TracableInfo) -> Result {
