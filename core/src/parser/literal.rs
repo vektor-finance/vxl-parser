@@ -24,11 +24,25 @@ fn false_literal(i: Span) -> Result {
 }
 
 #[tracable_parser]
+fn none_literal(i: Span) -> Result {
+  map(tag_no_case("none"), |span: Span| Node::new(Token::None, &span))(i)
+}
+
+#[tracable_parser]
 fn boolean(i: Span) -> Result {
   let (_, head): (_, char) = peek(anychar)(i)?;
   match head {
     't' | 'T' => true_literal(i),
     'f' | 'F' => false_literal(i),
+    _ => Err(Err::Error((i, ErrorKind::Tag))),
+  }
+}
+
+#[tracable_parser]
+fn none(i: Span) -> Result {
+  let (_, head): (_, char) = peek(anychar)(i)?;
+  match head {
+    'n' => none_literal(i),
     _ => Err(Err::Error((i, ErrorKind::Tag))),
   }
 }
@@ -60,6 +74,7 @@ pub(super) fn literal(i: Span) -> Result {
   let (_, head): (_, char) = peek(anychar)(i)?;
   match head {
     't' | 'T' | 'f' | 'F' => boolean(i),
+    'n' => none(i),
     '"' => string(i),
     '-' | '0'..='9' => number(i),
     _ => Err(Err::Error((i, ErrorKind::Char))),
@@ -87,6 +102,19 @@ mod test {
 
     let parsed: bool = input.to_lowercase().parse()?;
     assert_eq!(node.token.as_boolean(), Some(parsed));
+
+    Ok(())
+  }
+
+  #[rstest(input, expected,
+        case("none", none!()),
+    )]
+  fn test_none(input: &'static str, expected: Token, info: TracableInfo) -> Result {
+    let input = Span::new_extra(input, info);
+    let (span, node) = none(input)?;
+    assert!(span.fragment().is_empty());
+
+    assert_eq!(node.token, expected);
 
     Ok(())
   }
