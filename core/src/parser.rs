@@ -84,11 +84,14 @@ fn function(i: Span) -> Result {
       delimited(
         char('('),
         opt(tuple((
-          function_arg,
-          many0(preceded(pair(char(','), multispace0), function_arg)),
+          preceded(multispace0, function_arg),
+          many0(preceded(
+            pair(char(','), preceded(multispace0, opt(line_ending))),
+            function_arg,
+          )),
           opt(elipsis),
         ))),
-        char(')'),
+        preceded(multispace0, char(')')),
       ),
     )),
     |(name, subfunction, args)| {
