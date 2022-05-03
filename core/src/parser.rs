@@ -670,17 +670,12 @@ mod test {
         case("fun.sub(foo() ? true : false)",
           function!("fun", "sub", conditional!(function!("foo"), boolean!(true), boolean!(false)))
         ),
-        case("fun.sub(
+        case(r#"fun.sub(
           123
-        )",
+        )"#,
           function!("fun",  "sub", number!(123))
         ),
-        case("fun.sub(
-          123,
-          false,
-          \"vektor\",
-          foo() ? true : false
-        )",
+        case("fun.sub(\n\t123,\n\tfalse,\n\t\"vektor\",\n\tfoo() ? true : false)",
           function!(
             "fun",
             "sub",
