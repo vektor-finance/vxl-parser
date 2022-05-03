@@ -215,6 +215,7 @@ pub enum Token {
   Boolean(bool),
   Number(N),
   String(String),
+  None,
 
   // Expression terms
   Function(Function),
@@ -283,6 +284,7 @@ impl Token {
   gen_as!(string, Token::String(s), &str, s);
   gen_as!(number, Token::Number(n), &N, n);
   gen_as!(address, Token::Address(a), &str, a);
+  gen_as!(none, Token::None);
 
   gen_as!(function, Token::Function(f), &Function, f);
   gen_as!(conditional, Token::Conditional(c), &Conditional, c);
@@ -404,6 +406,13 @@ macro_rules! boolean {
 macro_rules! address {
   ($s:expr) => {
     Token::Address(String::from($s))
+  };
+}
+
+#[macro_export]
+macro_rules! none {
+  () => {
+    Token::None
   };
 }
 
