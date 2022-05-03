@@ -1,6 +1,6 @@
 [package]
 name = "elixir"
-version = "0.0.4"
+version = "0.0.5"
 authors = ["Vektor Engineering <engineering@vektor.finance>"]
 edition = "2018"
 homepage = "https://vektor.finance"
