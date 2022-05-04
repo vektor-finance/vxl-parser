@@ -795,7 +795,6 @@ mod test {
             "fun() # comment",
             vec![node!(function!("fun"))]
         ),
-        // FIX
         case(
             "fun()
             # comment",
@@ -805,17 +804,14 @@ mod test {
             "fun()    ",
             vec![node!(function!("fun"))]
         ),
-        // FIX
         case(
             "fun(); # comment",
             vec![node!(function!("fun"))]
         ),
-        // FIX
         case(
             "fun();#comment",
             vec![node!(function!("fun"))]
         ),
-        // FIX
         case(
             "fun();
             #comment",
@@ -845,7 +841,6 @@ mod test {
             "fun();\nfun2()",
             vec![node!(function!("fun")), node!(function!("fun2"))]
         ),
-        // FIX
         case(
           r#"fun.sub(1, true) # comment 1
 
