@@ -407,7 +407,7 @@ fn file(i: Span) -> OResult {
   let (_, tree) = all_consuming(complete(fold_many1(
     delimited(
       multispace0,
-      expression,
+      alt((expression, line_comment)),
       tuple((
         space0,
         alt((
@@ -420,7 +420,12 @@ fn file(i: Span) -> OResult {
     ),
     Tree::new(),
     |mut tree, node| {
-      tree.push(node);
+      match node.token {
+        // Filter out top-level line comments
+        // TODO: Better strip at parse time
+        Token::LineComment(_) => {}
+        _ => tree.push(node),
+      }
       tree
     },
   )))(i)?;
