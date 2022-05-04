@@ -4,12 +4,10 @@ use nom_tracable::tracable_parser;
 
 use super::{Node, Result, Span, Token};
 
-const LINE_COMMENT_SYMBOL: char = '#';
-
 #[tracable_parser]
 pub fn line_comment(i: Span) -> Result {
   map(
-    pair(char(LINE_COMMENT_SYMBOL), is_not("\n\r")),
+    pair(char('#'), is_not("\n\r")),
     |(_, span): (char, Span)| Node::new(Token::LineComment(String::from(*span.fragment())), &span),
   )(i)
 }
