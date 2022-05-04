@@ -273,11 +273,11 @@ fn if_statement(i: Span) -> Result {
       delimited(
         char('('),
         tuple((
-          expression,
+          preceded(multispace0, expression),
           preceded(pair(char(','), multispace0), expression),
           opt(preceded(pair(char(','), multispace0), expression)),
         )),
-        char(')'),
+        preceded(multispace0, char(')')),
       ),
     )),
     |(_, (cond, left, right))| {
@@ -732,15 +732,26 @@ mod test {
             conditional!(boolean!(true), function!("foo"), none!())
         ),
         case(
-            r"if(((1 + 1) >= 2), foo(123))",
-            conditional!(
-                binary_op!(
-                    binary_op!(number!(1), "+", number!(1)),
-                    ">=",
-                    number!(2)
-                ),
-                function!("foo", none, number!(123))
-            )
+          r"if(((1 + 1) >= 2), foo(123))",
+          conditional!(
+            binary_op!(
+              binary_op!(number!(1), "+", number!(1)),
+              ">=",
+              number!(2)
+            ),
+            function!("foo", none, number!(123))
+          )
+        ),
+        case(
+            r#"if(true,
+              1,
+                2
+            )"#,
+            conditional!(boolean!(true), number!(1), number!(2))
+        ),
+        case(
+            "if(\n\ttrue,\n\tfoo(),\n\tnone)",
+            conditional!(boolean!(true), function!("foo"), none!())
         ),
     )]
   fn test_if_statement(input: &'static str, expected: Token, info: TracableInfo) -> Result {
