@@ -407,8 +407,23 @@ fn file(i: Span) -> OResult {
   let (_, tree) = all_consuming(complete(fold_many1(
     delimited(
       multispace0,
-      alt((expression, line_comment)),
-      tuple((space0, alt((tag(";"), eof, recognize(many1(line_ending)))))),
+      expression,
+      tuple((
+        space0,
+        alt((
+          tag(";"),
+          recognize(
+            tuple((
+              opt(tag(";")),
+              space0,
+              line_comment,
+              opt(line_ending)
+            ))
+          ),
+          eof,
+          recognize(many1(line_ending))
+        ))
+      )),
     ),
     Tree::new(),
     |mut tree, node| {
@@ -782,6 +797,7 @@ mod test {
             "fun() # comment",
             vec![node!(function!("fun"))]
         ),
+        // FIX
         case(
             "fun()
             # comment",
@@ -791,14 +807,17 @@ mod test {
             "fun()    ",
             vec![node!(function!("fun"))]
         ),
+        // FIX
         case(
             "fun(); # comment",
             vec![node!(function!("fun"))]
         ),
+        // FIX
         case(
             "fun();#comment",
             vec![node!(function!("fun"))]
         ),
+        // FIX
         case(
             "fun();
             #comment",
@@ -828,6 +847,7 @@ mod test {
             "fun();\nfun2()",
             vec![node!(function!("fun")), node!(function!("fun2"))]
         ),
+        // FIX
         case(
           r#"fun.sub(1, true) # comment 1
 
@@ -887,6 +907,7 @@ mod test {
     let tree = file(input)?;
 
     assert_eq!(tree.is_empty(), false);
+    assert_eq!(tree.len(), expected.len());
 
     for (i, n) in expected.iter().enumerate() {
       tree[i].assert_same_token(n);
@@ -897,7 +918,7 @@ mod test {
 
   #[rstest(input, case("fun() fun2()"))]
   fn test_file_invalid(input: &'static str, info: TracableInfo) {
-    let i = Span::new_extra(input, info);
-    assert!(file(i).is_err());
+    let input = Span::new_extra(input, info);
+    assert!(file(input).is_err());
   }
 }
