@@ -239,7 +239,7 @@ fn expr_term(i: Span) -> Result {
     literal,
     for_loop,
     collection,
-    if_function,
+    if_statement,
     function,
     identifier,
     sub_expression,
@@ -266,7 +266,7 @@ fn expr_term(i: Span) -> Result {
 }
 
 #[tracable_parser]
-fn if_function(i: Span) -> Result {
+fn if_statement(i: Span) -> Result {
   map(
     tuple((
       tag_no_case("if"),
@@ -745,7 +745,7 @@ mod test {
     )]
   fn test_if_function(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let input = Span::new_extra(input, info);
-    let (span, node) = if_function(input)?;
+    let (span, node) = if_statement(input)?;
     assert!(span.fragment().is_empty());
 
     let cond = node.token.as_conditional().ok_or("node.token was not a conditional")?;
