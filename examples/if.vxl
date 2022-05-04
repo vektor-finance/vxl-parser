@@ -3,3 +3,8 @@ IF(
   DO(),
   DONT()
 )
+
+IF(
+  PRICE() > 10.01,
+  DO()
+)
