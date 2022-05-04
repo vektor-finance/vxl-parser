@@ -743,7 +743,7 @@ mod test {
             )
         ),
     )]
-  fn test_if_function(input: &'static str, expected: Token, info: TracableInfo) -> Result {
+  fn test_if_statement(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let input = Span::new_extra(input, info);
     let (span, node) = if_statement(input)?;
     assert!(span.fragment().is_empty());
