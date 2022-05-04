@@ -239,7 +239,7 @@ fn expr_term(i: Span) -> Result {
     literal,
     for_loop,
     collection,
-    if_function,
+    if_statement,
     function,
     identifier,
     sub_expression,
@@ -266,18 +266,18 @@ fn expr_term(i: Span) -> Result {
 }
 
 #[tracable_parser]
-fn if_function(i: Span) -> Result {
+fn if_statement(i: Span) -> Result {
   map(
     tuple((
       tag_no_case("if"),
       delimited(
         char('('),
         tuple((
-          expression,
+          preceded(multispace0, expression),
           preceded(pair(char(','), multispace0), expression),
           opt(preceded(pair(char(','), multispace0), expression)),
         )),
-        char(')'),
+        preceded(multispace0, char(')')),
       ),
     )),
     |(_, (cond, left, right))| {
@@ -732,20 +732,31 @@ mod test {
             conditional!(boolean!(true), function!("foo"), none!())
         ),
         case(
-            r"if(((1 + 1) >= 2), foo(123))",
-            conditional!(
-                binary_op!(
-                    binary_op!(number!(1), "+", number!(1)),
-                    ">=",
-                    number!(2)
-                ),
-                function!("foo", none, number!(123))
-            )
+          r"if(((1 + 1) >= 2), foo(123))",
+          conditional!(
+            binary_op!(
+              binary_op!(number!(1), "+", number!(1)),
+              ">=",
+              number!(2)
+            ),
+            function!("foo", none, number!(123))
+          )
+        ),
+        case(
+            r#"if(true,
+              1,
+                2
+            )"#,
+            conditional!(boolean!(true), number!(1), number!(2))
+        ),
+        case(
+            "if(\n\ttrue,\n\tfoo(),\n\tnone)",
+            conditional!(boolean!(true), function!("foo"), none!())
         ),
     )]
-  fn test_if_function(input: &'static str, expected: Token, info: TracableInfo) -> Result {
+  fn test_if_statement(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let input = Span::new_extra(input, info);
-    let (span, node) = if_function(input)?;
+    let (span, node) = if_statement(input)?;
     assert!(span.fragment().is_empty());
 
     let cond = node.token.as_conditional().ok_or("node.token was not a conditional")?;
@@ -835,6 +846,35 @@ mod test {
         //       node!(line_comment!("comment4")),
         //     ]
         // ),
+          case(
+            r#"fun.sub(
+              1,
+              true
+            )
+
+            1 + 3
+
+            if(
+              2 >= 1,
+              fun2(),
+              fun3(opt=1)
+            )"#,
+            vec![
+              node!(function!("fun", "sub", number!(1), boolean!(true))),
+              node!(binary_op!(number!(1), "+", number!(3))),
+              node!(
+                conditional!(
+                  binary_op!(
+                      number!(2),
+                      ">=",
+                      number!(1)
+                  ),
+                  function!("fun2"),
+                  function!("fun3", none, opt!("opt", number!(1)))
+                )
+              ),
+            ]
+        ),
         case(
             r#"fun.sub(1, true)
 
