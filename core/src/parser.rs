@@ -412,17 +412,10 @@ fn file(i: Span) -> OResult {
         space0,
         alt((
           tag(";"),
-          recognize(
-            tuple((
-              opt(tag(";")),
-              space0,
-              line_comment,
-              opt(line_ending)
-            ))
-          ),
+          recognize(tuple((opt(tag(";")), space0, line_comment, opt(line_ending)))),
           eof,
-          recognize(many1(line_ending))
-        ))
+          recognize(many1(line_ending)),
+        )),
       )),
     ),
     Tree::new(),
