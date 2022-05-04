@@ -783,6 +783,11 @@ mod test {
             vec![node!(function!("fun"))]
         ),
         case(
+            "fun()
+            # comment",
+            vec![node!(function!("fun"))]
+        ),
+        case(
             "fun()    ",
             vec![node!(function!("fun"))]
         ),
@@ -792,6 +797,11 @@ mod test {
         ),
         case(
             "fun();#comment",
+            vec![node!(function!("fun"))]
+        ),
+        case(
+            "fun();
+            #comment",
             vec![node!(function!("fun"))]
         ),
         case(
