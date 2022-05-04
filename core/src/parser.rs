@@ -423,6 +423,7 @@ fn file(i: Span) -> OResult {
       match node.token {
         // Filter out top-level line comments
         // TODO: Better strip at parse time
+        // OR make all comments top-level and then strip
         Token::LineComment(_) => {}
         _ => tree.push(node),
       }
