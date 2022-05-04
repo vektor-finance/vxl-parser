@@ -835,6 +835,35 @@ mod test {
         //       node!(line_comment!("comment4")),
         //     ]
         // ),
+          case(
+            r#"fun.sub(
+              1,
+              true
+            )
+
+            1 + 3
+
+            if(
+              2 >= 1,
+              fun2(),
+              fun3(opt=1)
+            )"#,
+            vec![
+              node!(function!("fun", "sub", number!(1), boolean!(true))),
+              node!(binary_op!(number!(1), "+", number!(3))),
+              node!(
+                conditional!(
+                  binary_op!(
+                      number!(2),
+                      ">=",
+                      number!(1)
+                  ),
+                  function!("fun2"),
+                  function!("fun3", none, opt!("opt", number!(1)))
+                )
+              ),
+            ]
+        ),
         case(
             r#"fun.sub(1, true)
 
