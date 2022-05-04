@@ -139,7 +139,7 @@ pub(super) fn number(i: Span) -> Result {
     N::Int(i) => {
       let pow = 10i64.pow(exp.abs() as u32);
       if exp < 0 {
-        N::Int(i * (1 / pow))
+        N::Float((i as f64) * (1.0 / (pow as f64)))
       } else {
         N::Int(i * pow)
       }
@@ -194,7 +194,9 @@ mod test {
         case("-471.399", number!(-471.399)),
         case("1.7e8", number!(170000000)),
         case("-17E10", number!(-170000000000)),
-        case("8.6e-6", number!(0.0000086))
+        case("8.6e-6", number!(0.0000086)),
+        case("1e-4", number!(0.0001)),
+        case("-1e-4", number!(-0.0001))
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
@@ -217,6 +219,7 @@ mod test {
         case(N::Int(170000000), ("int", "170000000")),
         case(N::Int(-170000000000), ("int", "-170000000000")),
         case(N::Float(0.000008599999999999999), ("float", "0.000008599999999999999")),
+        case(N::Float(-0.0000123), ("float", "-0.0000123")),
   )]
   fn test_serialize(input: N, expected: (&'static str, &'static str)) -> Result {
     let (t, v) = expected;
