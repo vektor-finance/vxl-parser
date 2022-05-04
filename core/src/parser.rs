@@ -408,11 +408,25 @@ fn file(i: Span) -> OResult {
     delimited(
       multispace0,
       alt((expression, line_comment)),
-      tuple((space0, alt((tag(";"), eof, recognize(many1(line_ending)))))),
+      tuple((
+        space0,
+        alt((
+          tag(";"),
+          recognize(tuple((opt(tag(";")), space0, line_comment, opt(line_ending)))),
+          eof,
+          recognize(many1(line_ending)),
+        )),
+      )),
     ),
     Tree::new(),
     |mut tree, node| {
-      tree.push(node);
+      match node.token {
+        // Filter out top-level line comments
+        // TODO: Better strip at parse time
+        // OR make all comments top-level and then strip
+        Token::LineComment(_) => {}
+        _ => tree.push(node),
+      }
       tree
     },
   )))(i)?;
@@ -778,21 +792,31 @@ mod test {
             "fun()",
             vec![node!(function!("fun"))]
         ),
-        // case(
-        //     "fun() # comment",
-        //     vec![node!(function!("fun")), node!(line_comment!(" comment"))]
-        // ),
+        case(
+            "fun() # comment",
+            vec![node!(function!("fun"))]
+        ),
+        case(
+            "fun()
+            # comment",
+            vec![node!(function!("fun"))]
+        ),
         case(
             "fun()    ",
             vec![node!(function!("fun"))]
         ),
         case(
             "fun(); # comment",
-            vec![node!(function!("fun")), node!(line_comment!(" comment"))]
+            vec![node!(function!("fun"))]
         ),
         case(
             "fun();#comment",
-            vec![node!(function!("fun")), node!(line_comment!("comment"))]
+            vec![node!(function!("fun"))]
+        ),
+        case(
+            "fun();
+            #comment",
+            vec![node!(function!("fun"))]
         ),
         case(
             "fun()    ;",
@@ -818,91 +842,66 @@ mod test {
             "fun();\nfun2()",
             vec![node!(function!("fun")), node!(function!("fun2"))]
         ),
-        // case(
-        //     r#"fun.sub(1, true) # comment 1
+        case(
+          r#"fun.sub(1, true) # comment 1
 
-        //     1 + 3 # comment 2
+          1 + 3 # comment 2
 
-        //     # comment 3
+          # comment 3
 
-        //     if(2 >= 1, fun2(), fun3(opt=1))#comment 4"#,
-        //     vec![
-        //       node!(function!("fun", "sub", number!(1), boolean!(true))),
-        //       node!(line_comment!(" comment 1")),
-        //       node!(binary_op!(number!(1), "+", number!(3))),
-        //       node!(line_comment!(" comment 2")),
-        //       node!(line_comment!(" comment 3")),
-        //       node!(
-        //         conditional!(
-        //           binary_op!(
-        //               number!(2),
-        //               ">=",
-        //               number!(1)
-        //           ),
-        //           function!("fun2"),
-        //           function!("fun3", none, opt!("opt", number!(1)))
-        //         )
-        //       ),
-        //       node!(line_comment!("comment4")),
-        //     ]
-        // ),
-          case(
-            r#"fun.sub(
-              1,
-              true
-            )
-
-            1 + 3
-
-            if(
-              2 >= 1,
-              fun2(),
-              fun3(opt=1)
-            )"#,
-            vec![
-              node!(function!("fun", "sub", number!(1), boolean!(true))),
-              node!(binary_op!(number!(1), "+", number!(3))),
-              node!(
-                conditional!(
-                  binary_op!(
-                      number!(2),
-                      ">=",
-                      number!(1)
-                  ),
-                  function!("fun2"),
-                  function!("fun3", none, opt!("opt", number!(1)))
-                )
-              ),
-            ]
+          if(2 >= 1, fun2(), fun3(opt=1))#comment 4"#,
+          vec![
+            node!(function!("fun", "sub", number!(1), boolean!(true))),
+            node!(binary_op!(number!(1), "+", number!(3))),
+            node!(
+              conditional!(
+                binary_op!(
+                    number!(2),
+                    ">=",
+                    number!(1)
+                ),
+                function!("fun2"),
+                function!("fun3", none, opt!("opt", number!(1)))
+              )
+            ),
+          ]
         ),
         case(
-            r#"fun.sub(1, true)
+          r#"fun.sub(
+            1,
+            true
+          )
 
-            1 + 3
+          1 + 3
 
-            if(2 >= 1, fun2(), fun3(opt=1))"#,
-            vec![
-              node!(function!("fun", "sub", number!(1), boolean!(true))),
-              node!(binary_op!(number!(1), "+", number!(3))),
-              node!(
-                conditional!(
-                  binary_op!(
-                      number!(2),
-                      ">=",
-                      number!(1)
-                  ),
-                  function!("fun2"),
-                  function!("fun3", none, opt!("opt", number!(1)))
-                )
-              ),
-            ]
-        ),
+          if(
+            2 >= 1,
+            fun2(),
+            fun3(opt=1)
+          )"#,
+          vec![
+            node!(function!("fun", "sub", number!(1), boolean!(true))),
+            node!(binary_op!(number!(1), "+", number!(3))),
+            node!(
+              conditional!(
+                binary_op!(
+                    number!(2),
+                    ">=",
+                    number!(1)
+                ),
+                function!("fun2"),
+                function!("fun3", none, opt!("opt", number!(1)))
+              )
+            ),
+          ]
+      ),
     )]
   fn test_file(input: &'static str, expected: Tree, info: TracableInfo) -> Result {
     let input = Span::new_extra(input, info);
     let tree = file(input)?;
 
     assert_eq!(tree.is_empty(), false);
+    assert_eq!(tree.len(), expected.len());
 
     for (i, n) in expected.iter().enumerate() {
       tree[i].assert_same_token(n);
@@ -913,7 +912,7 @@ mod test {
 
   #[rstest(input, case("fun() fun2()"))]
   fn test_file_invalid(input: &'static str, info: TracableInfo) {
-    let i = Span::new_extra(input, info);
-    assert!(file(i).is_err());
+    let input = Span::new_extra(input, info);
+    assert!(file(input).is_err());
   }
 }
