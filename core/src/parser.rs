@@ -86,7 +86,7 @@ fn function(i: Span) -> Result {
         opt(tuple((
           preceded(multispace0, function_arg),
           many0(preceded(
-            pair(char(','), preceded(multispace0, opt(line_ending))),
+            pair(preceded(multispace0, char(',')), preceded(multispace0, opt(line_ending))),
             function_arg,
           )),
           opt(elipsis),
@@ -616,6 +616,7 @@ mod test {
         case("FuN.sUB()", function!("fun", "sub")),
         case("fun(1, 2, false, none)", function!("fun", none, number!(1), number!(2), boolean!(false), none!())),
         case("fun.sub(1, 2, 3)", function!("fun", "sub", number!(1), number!(2), number!(3))),
+        case("fun.sub( 1 , 2 , 3 )", function!("fun", "sub", number!(1), number!(2), number!(3))),
         case("_fun.sub(1, 2, 3)", function!("_fun", "sub", number!(1), number!(2), number!(3))),
         case("foo(false)", function!("foo", none, boolean!(false))),
         case("foo(!false)", function!("foo", none, unary_op!("!", boolean!(false)))),
