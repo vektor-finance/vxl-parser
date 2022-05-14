@@ -42,7 +42,7 @@ pub type Result<'a, I = Span<'a>, O = Node, E = (I, ErrorKind)> = SResult<(I, O)
 pub type OResult<'a> = SResult<Tree, Box<dyn Error + 'a>>;
 
 fn valid_ident_start_char(c: char) -> bool {
-  c.is_alphabetic() || matches!(c, '_')
+  c.is_alphanumeric() || matches!(c, '_')
 }
 
 fn valid_ident_char(c: char) -> bool {
@@ -86,7 +86,10 @@ fn function(i: Span) -> Result {
         opt(tuple((
           preceded(multispace0, function_arg),
           many0(preceded(
-            pair(preceded(multispace0, char(',')), preceded(multispace0, opt(line_ending))),
+            pair(
+              preceded(multispace0, char(',')),
+              preceded(multispace0, opt(line_ending)),
+            ),
             function_arg,
           )),
           opt(elipsis),
@@ -457,7 +460,8 @@ mod test {
             case("TEST_LOWERCASING", ident!("test_lowercasing")),
             case("test_with_underscores", ident!("test_with_underscores")),
             case("test-with-dashes", ident!("test-with-dashes")),
-            case("test-14_with_numbers", ident!("test-14_with_numbers"))
+            case("test-14_with_numbers", ident!("test-14_with_numbers")),
+            case("1test_with-dash", ident!("1test_with-dash"))
     )]
   fn test_identfier(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let (span, actual) = identifier(Span::new_extra(input, info))?;
@@ -614,7 +618,10 @@ mod test {
         case("_fun()", function!("_fun")),
         case("fun.sub()", function!("fun", "sub")),
         case("FuN.sUB()", function!("fun", "sub")),
-        case("fun(1, 2, false, none)", function!("fun", none, number!(1), number!(2), boolean!(false), none!())),
+        case(
+          "fun(1, 2, false, none, 1dent_if-ier)",
+          function!("fun", none, number!(1), number!(2), boolean!(false), none!(), ident!("1dent_ifier"))
+        ),
         case("fun.sub(1, 2, 3)", function!("fun", "sub", number!(1), number!(2), number!(3))),
         case("fun.sub( 1 , 2 , 3 )", function!("fun", "sub", number!(1), number!(2), number!(3))),
         case("_fun.sub(1, 2, 3)", function!("_fun", "sub", number!(1), number!(2), number!(3))),
@@ -846,6 +853,8 @@ mod test {
         case(
           r#"fun.sub(1, true) # comment 1
 
+          1dent_ifier
+
           1 + 3 # comment 2
 
           # comment 3
@@ -853,6 +862,7 @@ mod test {
           if(2 >= 1, fun2(), fun3(opt=1))#comment 4"#,
           vec![
             node!(function!("fun", "sub", number!(1), boolean!(true))),
+            node!(ident!("1dent_ifier")),
             node!(binary_op!(number!(1), "+", number!(3))),
             node!(
               conditional!(
