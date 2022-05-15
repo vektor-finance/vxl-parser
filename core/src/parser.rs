@@ -24,7 +24,7 @@ pub use tokens::*;
 
 use nom::{
   branch::alt,
-  bytes::complete::{tag, tag_no_case, take, take_while, take_while_m_n},
+  bytes::complete::{tag, tag_no_case, take, take_while, take_while1, take_while_m_n},
   character::complete::{char, line_ending, multispace0, newline, space0, space1},
   combinator::{all_consuming, complete, eof, map, opt, recognize},
   error::ErrorKind,
@@ -41,20 +41,32 @@ pub type SResult<O, E> = std::result::Result<O, E>;
 pub type Result<'a, I = Span<'a>, O = Node, E = (I, ErrorKind)> = SResult<(I, O), nom::Err<E>>;
 pub type OResult<'a> = SResult<Tree, Box<dyn Error + 'a>>;
 
-fn valid_ident_start_char(c: char) -> bool {
-  c.is_alphanumeric() || matches!(c, '_')
+fn valid_ident_start_char_a(c: char) -> bool {
+  c.is_alphabetic() || matches!(c, '_')
 }
 
-fn valid_ident_char(c: char) -> bool {
+fn valid_ident_char_a(c: char) -> bool {
   c.is_alphanumeric() || matches!(c, '_' | '-')
+}
+
+fn valid_ident_start_char_1(c: char) -> bool {
+  c.is_digit(10)
 }
 
 #[tracable_parser]
 fn identifier(i: Span) -> Result {
   map(
-    tuple((
-      take_while_m_n(1, 1, valid_ident_start_char),
-      take_while(valid_ident_char),
+    alt((
+      // starts with alphabetic char
+      tuple((
+        take_while_m_n(1, 1, valid_ident_start_char_a),
+        take_while(valid_ident_char_a),
+      )),
+      // starts with a number
+      tuple((
+        take_while_m_n(1, 1, valid_ident_start_char_1),
+        take_while1(|c: char| c.is_alphabetic()),
+      )),
     )),
     |(first, rest): (Span, Span)| {
       let mut m = String::from(*first.fragment());
@@ -461,13 +473,23 @@ mod test {
             case("test_with_underscores", ident!("test_with_underscores")),
             case("test-with-dashes", ident!("test-with-dashes")),
             case("test-14_with_numbers", ident!("test-14_with_numbers")),
-            case("1test_with-dash", ident!("1test_with-dash")),
+            case("1test", ident!("1test")),
+            case("a", ident!("a")),
+            case("a_", ident!("a_")),
+            case("1a", ident!("1a")),
+            case("1inch", ident!("1inch")),
     )]
   fn test_identfier(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let (span, actual) = identifier(Span::new_extra(input, info))?;
     assert_eq!(span.fragment().len(), 0);
     assert_eq!(actual.token, expected);
 
+    Ok(())
+  }
+
+  #[rstest(input, case("1_"), case("11abc"), case("11111a"), case("11111a"))]
+  fn test_identifier_invalid(input: &'static str, info: TracableInfo) -> Result {
+    assert!(identifier(Span::new_extra(input, info)).is_err());
     Ok(())
   }
 
@@ -619,8 +641,8 @@ mod test {
         case("fun.sub()", function!("fun", "sub")),
         case("FuN.sUB()", function!("fun", "sub")),
         case(
-          "fun(1, 2, false, none, 1dent_if-ier)",
-          function!("fun", none, number!(1), number!(2), boolean!(false), none!(), ident!("1dent_if-ier"))
+          "fun(1, 2, false, none, 1dent)",
+          function!("fun", none, number!(1), number!(2), boolean!(false), none!(), ident!("1dent"))
         ),
         case("fun.sub(1, 2, 3)", function!("fun", "sub", number!(1), number!(2), number!(3))),
         case("fun.sub( 1 , 2 , 3 )", function!("fun", "sub", number!(1), number!(2), number!(3))),
@@ -853,7 +875,7 @@ mod test {
         case(
           r#"fun.sub(1, true) # comment 1
 
-          1dent_ifier
+          1dentifier
 
           1 + 3 # comment 2
 
@@ -862,7 +884,7 @@ mod test {
           if(2 >= 1, fun2(), fun3(opt=1))#comment 4"#,
           vec![
             node!(function!("fun", "sub", number!(1), boolean!(true))),
-            node!(ident!("1dent_ifier")),
+            node!(ident!("1dentifier")),
             node!(binary_op!(number!(1), "+", number!(3))),
             node!(
               conditional!(
