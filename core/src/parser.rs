@@ -53,6 +53,10 @@ fn valid_ident_start_char_1(c: char) -> bool {
   c.is_digit(10)
 }
 
+fn valid_ident_char_1(c: char) -> bool {
+  c.is_alphabetic()
+}
+
 #[tracable_parser]
 fn identifier(i: Span) -> Result {
   map(
@@ -65,7 +69,7 @@ fn identifier(i: Span) -> Result {
       // starts with a number
       tuple((
         take_while_m_n(1, 1, valid_ident_start_char_1),
-        take_while1(|c: char| c.is_alphabetic()),
+        take_while1(valid_ident_char_1),
       )),
     )),
     |(first, rest): (Span, Span)| {
