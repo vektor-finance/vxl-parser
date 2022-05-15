@@ -12,3 +12,6 @@ trim_trailing_whitespace = false
 
 [{Makefile,**.mk}]
 indent_style = tab
+
+[*.vxl]
+insert_final_newline = false

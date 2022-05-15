@@ -6,10 +6,9 @@ use super::{Node, Result, Span, Token};
 
 #[tracable_parser]
 pub fn line_comment(i: Span) -> Result {
-  map(
-    pair(char('#'), is_not("\n\r")),
-    |(_, span): (char, Span)| Node::new(Token::LineComment(String::from(*span.fragment())), &span),
-  )(i)
+  map(pair(char('#'), is_not("\n\r")), |(_, span): (char, Span)| {
+    Node::new(Token::LineComment(String::from(*span.fragment())), &span)
+  })(i)
 }
 
 #[cfg(test)]
