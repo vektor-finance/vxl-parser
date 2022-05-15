@@ -461,7 +461,7 @@ mod test {
             case("test_with_underscores", ident!("test_with_underscores")),
             case("test-with-dashes", ident!("test-with-dashes")),
             case("test-14_with_numbers", ident!("test-14_with_numbers")),
-            case("1test_with-dash", ident!("1test_with-dash"))
+            case("1test_with-dash", ident!("1test_with-dash")),
     )]
   fn test_identfier(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let (span, actual) = identifier(Span::new_extra(input, info))?;
@@ -620,7 +620,7 @@ mod test {
         case("FuN.sUB()", function!("fun", "sub")),
         case(
           "fun(1, 2, false, none, 1dent_if-ier)",
-          function!("fun", none, number!(1), number!(2), boolean!(false), none!(), ident!("1dent_ifier"))
+          function!("fun", none, number!(1), number!(2), boolean!(false), none!(), ident!("1dent_if-ier"))
         ),
         case("fun.sub(1, 2, 3)", function!("fun", "sub", number!(1), number!(2), number!(3))),
         case("fun.sub( 1 , 2 , 3 )", function!("fun", "sub", number!(1), number!(2), number!(3))),
