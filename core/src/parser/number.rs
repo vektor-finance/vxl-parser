@@ -1,11 +1,11 @@
 use std::{rc::Rc, str::FromStr};
 
 use nom::{
-  bytes::complete::{tag_no_case},
-  character::{complete::{char, digit1, alpha1}},
-  combinator::{map, opt, not},
+  bytes::complete::tag_no_case,
+  character::complete::{alpha1, char, digit1},
+  combinator::{map, not, opt},
   error::ErrorKind,
-  sequence::{pair, preceded, tuple, terminated},
+  sequence::{pair, preceded, terminated, tuple},
   Err,
 };
 use nom_tracable::tracable_parser;
@@ -120,12 +120,9 @@ pub(super) fn number(i: Span) -> Result {
 
   let (i, num) = map(
     terminated(
-      tuple((
-        digit1,
-        opt(preceded(char('.'), digit1))
-      )),
+      tuple((digit1, opt(preceded(char('.'), digit1)))),
       // allows identifiers starting with numbers
-      not(preceded(opt(tag_no_case("e")), alpha1))
+      not(preceded(opt(tag_no_case("e")), alpha1)),
     ),
     |(dec, maybe_fract): (Span, Option<Span>)| {
       let mut buf = String::from(*dec.fragment());
