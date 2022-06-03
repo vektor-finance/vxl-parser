@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use nom::{
   branch::alt,
-  bytes::complete::{is_a, tag},
+  bytes::complete::{is_a, tag, tag_no_case},
   character::complete::{anychar, char, space0},
   combinator::{map, recognize},
   error::ErrorKind,
@@ -25,7 +25,7 @@ pub(super) fn sign(i: Span) -> Result {
 #[tracable_parser]
 fn negation(i: Span) -> Result {
   let (i, start) = position(i)?;
-  map(char('!'), move |_| Node::new(Token::Operator(Operator::Not), &start))(i)
+  map(alt((tag("!"), tag_no_case("not"))), move |_| Node::new(Token::Operator(Operator::Not), &start))(i)
 }
 
 #[tracable_parser]
@@ -53,8 +53,8 @@ fn arithmetic_operator(i: Span) -> Result {
 
 #[tracable_parser]
 fn logic_operator(i: Span) -> Result {
-  map(alt((tag("&&"), tag("||"))), move |span: Span| {
-    let op = if *span.fragment() == "&&" {
+  map(alt((tag("&&"), tag_no_case("and"), tag("||"), tag_no_case("or"))), move |span: Span| {
+    let op = if *span.fragment() == "&&" || *span.fragment() == "and" {
       Operator::And
     } else {
       Operator::Or
@@ -150,11 +150,15 @@ mod test {
 
   #[rstest(input, expected,
         case("!foo", node!(unary_op!("!", ident!("foo")))),
+        case("not foo", node!(unary_op!("!", ident!("foo")))),
         case("-test", node!(unary_op!("-", ident!("test")))),
         case("!test_func(13)", node!(unary_op!("!", function!("test_func", none, number!(13))))),
+        case("not test_func(13)", node!(unary_op!("!", function!("test_func", none, number!(13))))),
         case("- 14", node!(unary_op!("-", number!(14)))),
         case("!true", node!(unary_op!("!", boolean!(true)))),
-        case("![1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false)))))
+        case("not true", node!(unary_op!("!", boolean!(true)))),
+        case("![1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false))))),
+        case("not [1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false)))))
     )]
   fn test_unary_op(input: &'static str, expected: Node, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
@@ -180,7 +184,9 @@ mod test {
         case("1 ^ bar", node!(binary_op!(number!(1), "^", ident!("bar")))),
         case("foo ^ bar", node!(binary_op!(ident!("foo"), "^", ident!("bar")))),
         case("foo && bar", node!(binary_op!(ident!("foo"), "&&", ident!("bar")))),
+        case("foo and bar", node!(binary_op!(ident!("foo"), "&&", ident!("bar")))),
         case("foo || bar", node!(binary_op!(ident!("foo"), "||", ident!("bar")))),
+        case("foo or bar", node!(binary_op!(ident!("foo"), "||", ident!("bar")))),
         case("foo && (bar || bar)", node!(
             binary_op!(
                 ident!("foo"),
