@@ -13,6 +13,7 @@ node_modules/
 .elixir_ls
 _build/
 deps/
+elixir/priv/native
 
 # IDE
 .vscode
