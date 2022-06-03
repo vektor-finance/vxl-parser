@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use nom::{
   branch::alt,
-  bytes::complete::{is_a, tag},
+  bytes::complete::{is_a, tag, tag_no_case},
   character::complete::{anychar, char, space0},
   combinator::{map, recognize},
   error::ErrorKind,
@@ -53,8 +53,8 @@ fn arithmetic_operator(i: Span) -> Result {
 
 #[tracable_parser]
 fn logic_operator(i: Span) -> Result {
-  map(alt((tag("&&"), tag("||"))), move |span: Span| {
-    let op = if *span.fragment() == "&&" {
+  map(alt((tag("&&"), tag_no_case("and"), tag("||"), tag_no_case("or"))), move |span: Span| {
+    let op = if *span.fragment() == "&&" || *span.fragment() == "and" {
       Operator::And
     } else {
       Operator::Or
@@ -181,6 +181,8 @@ mod test {
         case("foo ^ bar", node!(binary_op!(ident!("foo"), "^", ident!("bar")))),
         case("foo && bar", node!(binary_op!(ident!("foo"), "&&", ident!("bar")))),
         case("foo || bar", node!(binary_op!(ident!("foo"), "||", ident!("bar")))),
+        case("foo or bar", node!(binary_op!(ident!("foo"), "||", ident!("bar")))),
+        case("foo and bar", node!(binary_op!(ident!("foo"), "&&", ident!("bar")))),
         case("foo && (bar || bar)", node!(
             binary_op!(
                 ident!("foo"),
