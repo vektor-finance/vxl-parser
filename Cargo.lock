@@ -151,7 +151,7 @@ dependencies = [
 
 [[package]]
 name = "cli"
-version = "0.0.10"
+version = "0.0.11"
 dependencies = [
  "anyhow",
  "clap 3.0.13",
@@ -173,7 +173,7 @@ dependencies = [
 
 [[package]]
 name = "core"
-version = "0.0.10"
+version = "0.0.11"
 dependencies = [
  "criterion",
  "nom 6.1.2",
@@ -333,7 +333,7 @@ checksum = "e78d4f1cc4ae33bbfc157ed5d5a5ef3bc29227303d595861deb238fcec4e9457"
 
 [[package]]
 name = "elixir"
-version = "0.0.10"
+version = "0.0.11"
 dependencies = [
  "anyhow",
  "core",
@@ -498,7 +498,7 @@ dependencies = [
 
 [[package]]
 name = "js"
-version = "0.0.10"
+version = "0.0.11"
 dependencies = [
  "anyhow",
  "console_error_panic_hook",
