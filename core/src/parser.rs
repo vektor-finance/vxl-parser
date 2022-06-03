@@ -823,6 +823,26 @@ mod test {
 
   #[rstest(input, expected,
         case(
+            "false",
+            vec![node!(boolean!(false))]
+        ),
+        case(
+            "! false",
+            vec![node!(unary_op!("!", boolean!(false)))]
+        ),
+        case(
+            "true or false",
+            vec![node!(binary_op!(boolean!(true), "||", boolean!(false)))]
+        ),
+        case(
+            "1 + 2",
+            vec![node!(binary_op!(number!(1), "+", number!(2)))]
+        ),
+        case(
+            "1e-4",
+            vec![node!(number!(0.0001))]
+        ),
+        case(
             "fun()",
             vec![node!(function!("fun"))]
         ),
