@@ -20,5 +20,4 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 #[wasm_bindgen(start)]
 pub fn init_console() {
   set_panic_hook();
-  console_log_build_info();
 }
