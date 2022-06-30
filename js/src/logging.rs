@@ -8,6 +8,7 @@ macro_rules! console_log {
 
 use crate::build_info::build_info;
 
+#[warn(dead_code)]
 pub fn console_log_build_info() {
   let info = build_info();
   // #[cfg(debug_assertions)]
