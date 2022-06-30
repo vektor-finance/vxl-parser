@@ -1,8 +1,6 @@
 pub use self::build_info::build_info;
 pub use self::parser::parse;
 
-use logging::console_log_build_info;
-
 use error::set_panic_hook;
 use wasm_bindgen::prelude::wasm_bindgen;
 
