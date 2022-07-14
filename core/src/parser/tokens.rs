@@ -1,12 +1,13 @@
 use std::{
   convert::TryFrom,
   fmt,
-  num::{ParseFloatError, ParseIntError},
+  num::ParseIntError,
   rc::Rc,
 };
 
 use super::{Node, N};
 use paste::paste;
+use rust_decimal::Error as DecimalError;
 use serde::Serialize;
 use serde_with::SerializeDisplay;
 use thiserror::Error;
@@ -17,7 +18,7 @@ pub enum TokenError {
   ParseIntError(#[from] ParseIntError),
 
   #[error("unable to parse float: {0}")]
-  ParseFloatError(#[from] ParseFloatError),
+  ParseFloatError(#[from] DecimalError),
 
   #[error("unrecognized operator: {0}")]
   OperatorError(String),

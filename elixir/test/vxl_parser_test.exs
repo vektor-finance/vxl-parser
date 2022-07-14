@@ -18,9 +18,9 @@ defmodule VXLParserTest do
   end
 
   test "successfully returns floats" do
-    assert VXLParser.parse("0.333333333333333333") ==
+    assert VXLParser.parse("0.3333333333333333333333333333") ==
              {:ok,
-              "[{\"offset\":0,\"line\":1,\"column\":1,\"token\":{\"number\":{\"float\":\"0.333333333333333333\"}}}]"}
+              "[{\"offset\":0,\"line\":1,\"column\":1,\"token\":{\"number\":{\"float\":\"0.3333333333333333333333333333\"}}}]"}
   end
 
   test "fails to parses function" do

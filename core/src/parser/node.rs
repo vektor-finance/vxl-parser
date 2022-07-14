@@ -50,6 +50,7 @@ mod test {
   use super::*;
   use crate::parser::N;
   use std::rc::Rc;
+  use rust_decimal::Decimal;
 
   impl Node {
     pub(in crate::parser) fn assert_same_token_if_some(&self, other: &Option<Rc<Node>>) {
@@ -96,7 +97,7 @@ mod test {
         }
         Token::Number(N::Float(f1)) => {
           if let Some(N::Float(f2)) = other.token.as_number() {
-            assert!((f1 - f2).abs() < f64::EPSILON);
+            assert!((f1 - f2).abs() < Decimal::MAX);
           } else {
             panic!("expected N, got {:#?}; self is {:#?}", other.token, self.token)
           }
