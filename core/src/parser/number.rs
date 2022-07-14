@@ -36,8 +36,8 @@ impl From<f64> for N {
 }
 
 impl From<Decimal> for N {
-  fn from(f: Decimal) -> Self {
-    N::Decimal(f)
+  fn from(d: Decimal) -> Self {
+    N::Decimal(d)
   }
 }
 
@@ -76,12 +76,12 @@ impl FromStr for N {
       return Ok(N::Int(i?));
     }
 
-    let f = Decimal::from_str(s);
-    if f.is_ok() {
-      return Ok(N::Decimal(f.unwrap()));
+    let d = Decimal::from_str(s);
+    if d.is_ok() {
+      return Ok(N::Decimal(d?));
     }
 
-    Err(f.err().unwrap().into())
+    Err(d.err().unwrap().into())
   }
 }
 
@@ -156,12 +156,12 @@ pub(super) fn number(i: Span) -> Result {
         N::Int(i * pow)
       }
     }
-    N::Decimal(f) => {
+    N::Decimal(d) => {
       let pow: Decimal = 10i64.pow(exp.abs() as u32).into();
       if exp < 0 {
-        N::Decimal(f * (Decimal::ONE / pow))
+        N::Decimal(d * (Decimal::ONE / pow))
       } else {
-        N::Int((f * pow).to_i64().unwrap())
+        N::Int((d * pow).to_i64().unwrap())
       }
     }
   });
