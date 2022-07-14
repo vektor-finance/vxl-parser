@@ -18,7 +18,7 @@ pub enum TokenError {
   ParseIntError(#[from] ParseIntError),
 
   #[error("unable to parse float: {0}")]
-  ParseFloatError(#[from] DecimalError),
+  ParseDecimalError(#[from] DecimalError),
 
   #[error("unrecognized operator: {0}")]
   OperatorError(String),
