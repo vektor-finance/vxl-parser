@@ -195,8 +195,8 @@ mod test {
 
   use nom_tracable::TracableInfo;
   use rstest::rstest;
-  use serde_test::{assert_ser_tokens, Token as SerdeToken};
   use rust_decimal_macros::dec;
+  use serde_test::{assert_ser_tokens, Token as SerdeToken};
 
   #[rstest(input, expected,
         case("1.23", number!(1.23)),

@@ -49,8 +49,8 @@ impl Node {
 mod test {
   use super::*;
   use crate::parser::N;
-  use std::rc::Rc;
   use rust_decimal::Decimal;
+  use std::rc::Rc;
 
   impl Node {
     pub(in crate::parser) fn assert_same_token_if_some(&self, other: &Option<Rc<Node>>) {

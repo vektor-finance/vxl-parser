@@ -1,9 +1,4 @@
-use std::{
-  convert::TryFrom,
-  fmt,
-  num::ParseIntError,
-  rc::Rc,
-};
+use std::{convert::TryFrom, fmt, num::ParseIntError, rc::Rc};
 
 use super::{Node, N};
 use paste::paste;
