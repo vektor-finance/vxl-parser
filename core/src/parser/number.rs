@@ -9,6 +9,7 @@ use nom::{
   Err,
 };
 use nom_tracable::tracable_parser;
+use rust_decimal::prelude::*;
 use serde::{Serialize, Serializer};
 
 use super::operation::sign;
@@ -17,7 +18,7 @@ use super::{Node, Operator, Result, Span, Token, TokenError, UnaryOp};
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum N {
   Int(i64),
-  Float(f64),
+  Decimal(Decimal),
 }
 
 impl Eq for N {}
@@ -30,7 +31,13 @@ impl From<i64> for N {
 
 impl From<f64> for N {
   fn from(f: f64) -> Self {
-    N::Float(f)
+    N::Decimal(Decimal::from_f64(f).unwrap())
+  }
+}
+
+impl From<Decimal> for N {
+  fn from(d: Decimal) -> Self {
+    N::Decimal(d)
   }
 }
 
@@ -39,8 +46,8 @@ impl N {
     self.as_int().is_some()
   }
 
-  pub fn is_float(&self) -> bool {
-    self.as_float().is_some()
+  pub fn is_decimal(&self) -> bool {
+    self.as_decimal().is_some()
   }
 
   pub fn as_int(&self) -> Option<i64> {
@@ -51,8 +58,8 @@ impl N {
     }
   }
 
-  pub fn as_float(&self) -> Option<f64> {
-    if let N::Float(f) = self {
+  pub fn as_decimal(&self) -> Option<Decimal> {
+    if let N::Decimal(f) = self {
       Some(*f)
     } else {
       None
@@ -69,12 +76,12 @@ impl FromStr for N {
       return Ok(N::Int(i?));
     }
 
-    let f = s.parse::<f64>();
-    if f.is_ok() {
-      return Ok(N::Float(f?));
+    let d = Decimal::from_str(s);
+    if d.is_ok() {
+      return Ok(N::Decimal(d?));
     }
 
-    Err(f.err().unwrap().into())
+    Err(d.err().unwrap().into())
   }
 }
 
@@ -86,7 +93,7 @@ impl Serialize for N {
   {
     match *self {
       N::Int(ref v) => serializer.serialize_newtype_variant("number", 0, "int", &v.to_string()),
-      N::Float(ref v) => serializer.serialize_newtype_variant("number", 1, "float", &v.to_string()),
+      N::Decimal(ref v) => serializer.serialize_newtype_variant("number", 1, "decimal", &v.to_string()),
     }
   }
 }
@@ -143,17 +150,18 @@ pub(super) fn number(i: Span) -> Result {
     N::Int(i) => {
       let pow = 10i64.pow(exp.abs() as u32);
       if exp < 0 {
-        N::Float((i as f64) * (1.0 / (pow as f64)))
+        let v = Decimal::from_i64(i).unwrap() * (Decimal::ONE / Decimal::from_i64(pow).unwrap());
+        N::Decimal(v)
       } else {
         N::Int(i * pow)
       }
     }
-    N::Float(f) => {
-      let pow = 10i64.pow(exp.abs() as u32) as f64;
+    N::Decimal(d) => {
+      let pow: Decimal = 10i64.pow(exp.abs() as u32).into();
       if exp < 0 {
-        N::Float(f * (1.0 / pow))
+        N::Decimal(d * (Decimal::ONE / pow))
       } else {
-        N::Int((f * pow) as i64)
+        N::Int((d * pow).to_i64().unwrap())
       }
     }
   });
@@ -187,6 +195,7 @@ mod test {
 
   use nom_tracable::TracableInfo;
   use rstest::rstest;
+  use rust_decimal_macros::dec;
   use serde_test::{assert_ser_tokens, Token as SerdeToken};
 
   #[rstest(input, expected,
@@ -200,7 +209,8 @@ mod test {
         case("-17E10", number!(-170000000000)),
         case("8.6e-6", number!(0.0000086)),
         case("1e-4", number!(0.0001)),
-        case("-1e-4", number!(-0.0001))
+        case("-1e-4", number!(-0.0001)),
+        case("0.333333333333333334", number!(0.333333333333333334)),
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
@@ -212,18 +222,20 @@ mod test {
   }
 
   #[rstest(input, expected,
-        case(N::Float(1.0), ("float", "1")),
-        case(N::Float(1.00), ("float", "1")),
-        case(N::Float(1.23), ("float", "1.23")),
+        case(N::Decimal(dec!(1)), ("decimal", "1")),
+        case(N::Decimal(dec!(1.0)), ("decimal", "1.0")),
+        case(N::Decimal(dec!(1.00)), ("decimal", "1.00")),
+        case(N::Decimal(dec!(1.23)), ("decimal", "1.23")),
         case(N::Int(47), ("int", "47")),
-        case(N::Float(17.3809), ("float", "17.3809")),
+        case(N::Decimal(dec!(17.3809)), ("decimal", "17.3809")),
         case(N::Int(17892037), ("int", "17892037")),
         case(N::Int(-38), ("int", "-38")),
-        case(N::Float(-471.399), ("float", "-471.399")),
+        case(N::Decimal(dec!(-471.399)), ("decimal", "-471.399")),
         case(N::Int(170000000), ("int", "170000000")),
         case(N::Int(-170000000000), ("int", "-170000000000")),
-        case(N::Float(0.000008599999999999999), ("float", "0.000008599999999999999")),
-        case(N::Float(-0.0000123), ("float", "-0.0000123")),
+        case(N::Decimal(dec!(0.000008599999999999999)), ("decimal", "0.000008599999999999999")),
+        case(N::Decimal(dec!(0.3333333333333333333333333333)), ("decimal", "0.3333333333333333333333333333")),
+        case(N::Decimal(dec!(-0.0000123)), ("decimal", "-0.0000123")),
   )]
   fn test_serialize(input: N, expected: (&'static str, &'static str)) -> Result {
     let (t, v) = expected;

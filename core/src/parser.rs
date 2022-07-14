@@ -50,7 +50,7 @@ fn valid_ident_char_a(c: char) -> bool {
 }
 
 fn valid_ident_start_char_1(c: char) -> bool {
-  c.is_digit(10)
+  c.is_ascii_digit()
 }
 
 fn valid_ident_char_1(c: char) -> bool {

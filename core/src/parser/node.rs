@@ -49,6 +49,7 @@ impl Node {
 mod test {
   use super::*;
   use crate::parser::N;
+  use rust_decimal::Decimal;
   use std::rc::Rc;
 
   impl Node {
@@ -94,9 +95,9 @@ mod test {
             panic!("expected UnaryOp, got {:#?}; self is {:#?}", other.token, self.token);
           }
         }
-        Token::Number(N::Float(f1)) => {
-          if let Some(N::Float(f2)) = other.token.as_number() {
-            assert!((f1 - f2).abs() < f64::EPSILON);
+        Token::Number(N::Decimal(f1)) => {
+          if let Some(N::Decimal(f2)) = other.token.as_number() {
+            assert!((f1 - f2).abs() < Decimal::MAX);
           } else {
             panic!("expected N, got {:#?}; self is {:#?}", other.token, self.token)
           }

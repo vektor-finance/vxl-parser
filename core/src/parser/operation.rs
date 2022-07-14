@@ -25,7 +25,9 @@ pub(super) fn sign(i: Span) -> Result {
 #[tracable_parser]
 fn negation(i: Span) -> Result {
   let (i, start) = position(i)?;
-  map(alt((tag("!"), tag_no_case("not"))), move |_| Node::new(Token::Operator(Operator::Not), &start))(i)
+  map(alt((tag("!"), tag_no_case("not"))), move |_| {
+    Node::new(Token::Operator(Operator::Not), &start)
+  })(i)
 }
 
 #[tracable_parser]
@@ -53,14 +55,17 @@ fn arithmetic_operator(i: Span) -> Result {
 
 #[tracable_parser]
 fn logic_operator(i: Span) -> Result {
-  map(alt((tag("&&"), tag_no_case("and"), tag("||"), tag_no_case("or"))), move |span: Span| {
-    let op = if *span.fragment() == "&&" || *span.fragment() == "and" {
-      Operator::And
-    } else {
-      Operator::Or
-    };
-    Node::new(Token::Operator(op), &span)
-  })(i)
+  map(
+    alt((tag("&&"), tag_no_case("and"), tag("||"), tag_no_case("or"))),
+    move |span: Span| {
+      let op = if *span.fragment() == "&&" || *span.fragment() == "and" {
+        Operator::And
+      } else {
+        Operator::Or
+      };
+      Node::new(Token::Operator(op), &span)
+    },
+  )(i)
 }
 
 #[tracable_parser]
