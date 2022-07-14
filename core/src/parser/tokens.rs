@@ -12,7 +12,7 @@ pub enum TokenError {
   #[error("unable to parse int: {0}")]
   ParseIntError(#[from] ParseIntError),
 
-  #[error("unable to parse float: {0}")]
+  #[error("unable to parse decimal: {0}")]
   ParseDecimalError(#[from] DecimalError),
 
   #[error("unrecognized operator: {0}")]
