@@ -223,6 +223,7 @@ mod test {
         case(N::Int(170000000), ("int", "170000000")),
         case(N::Int(-170000000000), ("int", "-170000000000")),
         case(N::Float(0.000008599999999999999), ("float", "0.000008599999999999999")),
+        case(N::Float(0.333333333333333333), ("float", "0.333333333333333333")),
         case(N::Float(-0.0000123), ("float", "-0.0000123")),
   )]
   fn test_serialize(input: N, expected: (&'static str, &'static str)) -> Result {
