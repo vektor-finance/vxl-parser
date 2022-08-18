@@ -500,7 +500,6 @@ mod test {
   #[rstest(input, expected,
             case("test_1 = true", attr!("test_1", boolean!(true))),
             case("TEST_1 = true", attr!("test_1", boolean!(true))),
-            case("TEST_1 = none", attr!("test_1", none!())),
             case(
                 r#"test-2 = "a test string""#,
                 attr!("test-2", string!("a test string")),
@@ -571,7 +570,6 @@ mod test {
   #[rstest(input, expected,
             case("test_1=true", opt!("test_1", boolean!(true))),
             case("TEST_1=true", opt!("test_1", boolean!(true))),
-            case("TEST_1=none", opt!("test_1", none!())),
             case(
                 r#"test-2= "a test string""#,
                 opt!("test-2", string!("a test string")),
@@ -646,7 +644,7 @@ mod test {
         case("FuN.sUB()", function!("fun", "sub")),
         case(
           "fun(1, 2, false, none, 1dent)",
-          function!("fun", none, number!(1), number!(2), boolean!(false), none!(), ident!("1dent"))
+          function!("fun", none, number!(1), number!(2), boolean!(false), ident!("none"), ident!("1dent"))
         ),
         case("fun.sub(1, 2, 3)", function!("fun", "sub", number!(1), number!(2), number!(3))),
         case("fun.sub( 1 , 2 , 3 )", function!("fun", "sub", number!(1), number!(2), number!(3))),
@@ -776,8 +774,8 @@ mod test {
             conditional!(function!("foo"), boolean!(false))
         ),
         case(
-            r"if(true, foo(), none)",
-            conditional!(boolean!(true), function!("foo"), none!())
+            r"if(true, foo())",
+            conditional!(boolean!(true), function!("foo"), none)
         ),
         case(
           r"if(((1 + 1) >= 2), foo(123))",
@@ -799,7 +797,7 @@ mod test {
         ),
         case(
             "if(\n\ttrue,\n\tfoo(),\n\tnone)",
-            conditional!(boolean!(true), function!("foo"), none!())
+            conditional!(boolean!(true), function!("foo"), ident!("none"))
         ),
     )]
   fn test_if_statement(input: &'static str, expected: Token, info: TracableInfo) -> Result {

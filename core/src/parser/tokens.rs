@@ -520,6 +520,14 @@ macro_rules! conditional {
         })
     };
 
+    ($t:expr, $l:expr, none) => {
+        Token::Conditional(Conditional{
+            condition: node!(rc $t),
+            if_true: node!(rc $l),
+            if_false: node!(none),
+        })
+    };
+
     ($t:expr, $l:expr, $r:expr) => {
         Token::Conditional(Conditional{
             condition: node!(rc $t),
