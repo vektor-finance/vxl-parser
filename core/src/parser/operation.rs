@@ -85,8 +85,20 @@ fn comparison_operator(i: Span) -> Result {
 }
 
 #[tracable_parser]
+fn list_operator(i: Span) -> Result {
+  let (i, span) = is_a("+-")(i)?;
+  let op = match *span.fragment() {
+    "++" => Ok(Operator::ListConcatenate),
+    "--" => Ok(Operator::ListSubtract),
+    _ => Err(Err::Error((i, ErrorKind::IsA))),
+  }?;
+
+  Ok((i, Node::new(Token::Operator(op), &span)))
+}
+
+#[tracable_parser]
 pub(super) fn binary_operator(i: Span) -> Result {
-  alt((arithmetic_operator, comparison_operator, logic_operator))(i)
+  alt((list_operator, arithmetic_operator, comparison_operator, logic_operator))(i)
 }
 
 pub(super) fn unary_operation(i: Span) -> Result {
@@ -243,7 +255,9 @@ mod test {
                     string!("test")
                 )
             ))
-        )
+        ),
+          case("[1, 2, 3] ++ [1, 2, 3]", node!(binary_op!(list!(number!(1), number!(2), number!(3)), "++", list!(number!(1), number!(2), number!(3))))),
+          case("[1, 2, 3] -- [1, 2, 3]", node!(binary_op!(list!(number!(1), number!(2), number!(3)), "--", list!(number!(1), number!(2), number!(3))))),
     )]
   fn test_binary_op(input: &'static str, expected: Node, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);

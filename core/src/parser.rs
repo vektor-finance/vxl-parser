@@ -3,10 +3,10 @@ use std::{error::Error, rc::Rc};
 #[macro_use]
 mod tokens;
 mod address;
-mod list;
 mod boolean;
 mod collection;
 mod comment;
+mod list;
 mod literal;
 mod node;
 mod number;
@@ -18,8 +18,8 @@ use address::address;
 use boolean::boolean;
 use collection::collection;
 use comment::line_comment;
-use literal::literal;
 use list::list;
+use literal::literal;
 use number::number;
 use operation::operation;
 use string::string;
@@ -845,6 +845,10 @@ mod test {
         case(
             "1e-4",
             vec![node!(number!(0.0001))]
+        ),
+        case(
+            "[1, 2, 3] ++ [1, 2, 3]",
+             vec![node!(binary_op!(list!(number!(1), number!(2), number!(3)), "++", list!(number!(1), number!(2), number!(3))))]
         ),
         case(
             "fun()",

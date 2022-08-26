@@ -2,7 +2,7 @@ use nom::{
   character::complete::{char, multispace0},
   combinator::{map, not, opt, recognize},
   multi::many0,
-  sequence::{pair, preceded, terminated, tuple}
+  sequence::{pair, preceded, terminated, tuple},
 };
 
 use nom_tracable::tracable_parser;

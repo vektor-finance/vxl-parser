@@ -117,6 +117,10 @@ pub enum Operator {
   IndexAccess,
   AttrSplat,
   FullSplat,
+
+  // List,
+  ListConcatenate,
+  ListSubtract,
 }
 
 impl fmt::Display for Operator {
@@ -150,6 +154,10 @@ impl fmt::Display for Operator {
       AttrSplat => ".*",
       IndexAccess => "[",
       FullSplat => "[*]",
+
+      // List
+      ListConcatenate => "++",
+      ListSubtract => "--",
     };
     write!(f, "{}", symbol)
   }
@@ -187,6 +195,10 @@ impl TryFrom<&str> for Operator {
       ".*" => Ok(Operator::AttrSplat),
       "[" => Ok(Operator::IndexAccess),
       "[*]" => Ok(Operator::FullSplat),
+
+      // List
+      "++" => Ok(Operator::ListConcatenate),
+      "--" => Ok(Operator::ListSubtract),
 
       _ => Err(TokenError::OperatorError(value.into())),
     }
