@@ -8,6 +8,7 @@ mod comment;
 mod literal;
 mod node;
 mod number;
+mod string;
 mod operation;
 
 use crate::tracer::get_tracer;
@@ -16,6 +17,7 @@ use collection::collection;
 use comment::line_comment;
 use literal::literal;
 use number::number;
+use string::string;
 use operation::operation;
 
 pub use node::{Node, Tree};
