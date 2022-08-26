@@ -1,13 +1,13 @@
 use nom::{
-  bytes::complete::{tag_no_case},
-  character::complete::{anychar},
+  bytes::complete::tag_no_case,
+  character::complete::anychar,
   combinator::{map, peek},
   error::ErrorKind,
   Err,
 };
 use nom_tracable::tracable_parser;
 
-use super::{number, Node, Result, string, Span, Token};
+use super::{Node, Result, Span, Token};
 
 #[tracable_parser]
 fn true_literal(i: Span) -> Result {

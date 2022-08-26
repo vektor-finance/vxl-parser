@@ -1,12 +1,7 @@
-use nom::{
-  character::complete::{anychar},
-  combinator::peek,
-  error::ErrorKind,
-  Err,
-};
+use nom::{character::complete::anychar, combinator::peek, error::ErrorKind, Err};
 use nom_tracable::tracable_parser;
 
-use super::{number, boolean, Result, string, Span};
+use super::{boolean, number, string, Result, Span};
 
 #[tracable_parser]
 pub(super) fn literal(i: Span) -> Result {

@@ -3,24 +3,26 @@ use std::{error::Error, rc::Rc};
 #[macro_use]
 mod tokens;
 mod address;
+mod array;
 mod boolean;
 mod collection;
 mod comment;
 mod literal;
 mod node;
 mod number;
-mod string;
 mod operation;
+mod string;
 
 use crate::tracer::get_tracer;
 use address::address;
+use array::array;
+use boolean::boolean;
 use collection::collection;
 use comment::line_comment;
 use literal::literal;
-use boolean::boolean;
 use number::number;
-use string::string;
 use operation::operation;
+use string::string;
 
 pub use node::{Node, Tree};
 pub use number::N;
