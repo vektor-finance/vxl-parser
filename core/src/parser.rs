@@ -3,7 +3,7 @@ use std::{error::Error, rc::Rc};
 #[macro_use]
 mod tokens;
 mod address;
-mod array;
+mod list;
 mod boolean;
 mod collection;
 mod comment;
@@ -15,11 +15,11 @@ mod string;
 
 use crate::tracer::get_tracer;
 use address::address;
-use array::array;
 use boolean::boolean;
 use collection::collection;
 use comment::line_comment;
 use literal::literal;
+use list::list;
 use number::number;
 use operation::operation;
 use string::string;

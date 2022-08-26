@@ -1,27 +1,26 @@
 use nom::{
-  character::complete::{anychar, char, multispace0},
-  combinator::{map, not, opt, peek, recognize},
-  error::ErrorKind,
+  character::complete::{char, multispace0},
+  combinator::{map, not, opt, recognize},
   multi::many0,
-  sequence::{pair, preceded, terminated, tuple},
-  Err,
+  sequence::{pair, preceded, terminated, tuple}
 };
+
 use nom_tracable::tracable_parser;
 
 use super::{expression, Node, Result, Span, Token};
 
 #[tracable_parser]
-fn array_end(i: Span) -> Result {
+fn list_end(i: Span) -> Result {
   map(tuple((opt(char(',')), multispace0, char(']'))), |(_, _, _)| {
     Node::default()
   })(i)
 }
 
 #[tracable_parser]
-pub(super) fn array(i: Span) -> Result {
+pub(super) fn list(i: Span) -> Result {
   let (i, start) = recognize(pair(char('['), multispace0))(i)?;
-  // short-circuit empty array
-  if let Ok((i, _)) = array_end(i) {
+  // short-circuit empty list
+  if let Ok((i, _)) = list_end(i) {
     return Ok((i, Node::new(Token::List(Vec::new()), &start)));
   }
 
@@ -29,9 +28,9 @@ pub(super) fn array(i: Span) -> Result {
     terminated(
       tuple((
         opt(expression),
-        many0(pair(not(array_end), preceded(pair(char(','), multispace0), expression))),
+        many0(pair(not(list_end), preceded(pair(char(','), multispace0), expression))),
       )),
-      array_end,
+      list_end,
     ),
     move |(first, tail): (Option<Node>, Vec<((), Node)>)| {
       let items = first.map_or(Vec::new(), |head| {
@@ -100,9 +99,9 @@ mod test {
             list![boolean!(false), binary_op!(ident!("foo"), "==", ident!("bar"))],
         )
     )]
-  fn test_array(input: &'static str, expected: Token, info: TracableInfo) -> Result {
+  fn test_list(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
-    let (span, node) = array(span)?;
+    let (span, node) = list(span)?;
     assert_eq!(span.fragment().len(), 0);
 
     let expected = expected.as_list().ok_or("expected was not a list")?;
