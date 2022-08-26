@@ -3,6 +3,7 @@ use std::{error::Error, rc::Rc};
 #[macro_use]
 mod tokens;
 mod address;
+mod boolean;
 mod collection;
 mod comment;
 mod literal;
@@ -16,6 +17,7 @@ use address::address;
 use collection::collection;
 use comment::line_comment;
 use literal::literal;
+use boolean::boolean;
 use number::number;
 use string::string;
 use operation::operation;
