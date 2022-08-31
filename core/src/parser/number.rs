@@ -148,7 +148,7 @@ pub(super) fn number(i: Span) -> Result {
   let (i, maybe_exp) = opt(exponent)(i)?;
   let num = maybe_exp.map_or(num, |exp| match num {
     N::Int(i) => {
-      let pow = 10i64.pow(exp.abs() as u32);
+      let pow = 10i64.pow(exp.unsigned_abs() as u32);
       if exp < 0 {
         let v = Decimal::from_i64(i).unwrap() * (Decimal::ONE / Decimal::from_i64(pow).unwrap());
         N::Decimal(v)
@@ -157,7 +157,7 @@ pub(super) fn number(i: Span) -> Result {
       }
     }
     N::Decimal(d) => {
-      let pow: Decimal = 10i64.pow(exp.abs() as u32).into();
+      let pow: Decimal = 10i64.pow(exp.unsigned_abs() as u32).into();
       if exp < 0 {
         N::Decimal(d * (Decimal::ONE / pow))
       } else {
