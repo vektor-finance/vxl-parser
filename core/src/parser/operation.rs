@@ -58,7 +58,7 @@ fn logic_operator(i: Span) -> Result {
   map(
     alt((tag("&&"), tag_no_case("and"), tag("||"), tag_no_case("or"))),
     move |span: Span| {
-      let op = if *span.fragment() == "&&" || *span.fragment() == "and" {
+      let op = if *span.fragment() == "&&" || span.fragment().to_lowercase() == "and" {
         Operator::And
       } else {
         Operator::Or
@@ -204,10 +204,12 @@ mod test {
         case("foo && bar", node!(binary_op!(ident!("foo"), "&&", ident!("bar")))),
         case("foo and bar", node!(binary_op!(ident!("foo"), "&&", ident!("bar")))),
         case("true and false", node!(binary_op!(boolean!(true), "&&", boolean!(false)))),
+        case("TRUE and FALSE", node!(binary_op!(boolean!(true), "&&", boolean!(false)))),
         case("1 and 0", node!(binary_op!(number!(1), "&&", number!(0)))),
         case("foo || bar", node!(binary_op!(ident!("foo"), "||", ident!("bar")))),
         case("foo or bar", node!(binary_op!(ident!("foo"), "||", ident!("bar")))),
         case("true or false", node!(binary_op!(boolean!(true), "||", boolean!(false)))),
+        case("TRUE or FALSE", node!(binary_op!(boolean!(true), "||", boolean!(false)))),
         case("1 or 0", node!(binary_op!(number!(1), "||", number!(0)))),
         case("foo && (bar || bar)", node!(
             binary_op!(
