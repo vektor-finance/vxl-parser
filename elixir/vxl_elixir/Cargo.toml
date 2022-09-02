@@ -1,13 +1,12 @@
 [package]
 name = "elixir"
-version = "0.0.16"
+version = "0.0.17"
 authors = ["Vektor Engineering <engineering@vektor.finance>"]
 edition = "2018"
 homepage = "https://vektor.finance"
 repository = "https://github.com/vektor-finance/vxl-parser.git"
 description = "Vektor's VXL parser - Elixir NIF"
 license = "UNLICENSED"
-
 include = [
   "CHANGELOG.md",
   "README.md",
@@ -33,4 +32,8 @@ path = "../../core"
 
 [build-dependencies]
 anyhow = "1.0.53"
-vergen = { version = "6.0.2", default-features = false, features = ["build", "cargo", "git"] }
+vergen = { version = "6.0.2", default-features = false, features = [
+  "build",
+  "cargo",
+  "git"
+] }

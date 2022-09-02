@@ -1,13 +1,12 @@
 [package]
 name = "core"
-version = "0.0.16"
+version = "0.0.17"
 authors = ["Vektor Engineering <engineering@vektor.finance>"]
 edition = "2018"
 homepage = "https://vektor.finance"
 repository = "https://github.com/vektor-finance/vxl-parser.git"
 description = "Vektor's VXL parser - core library"
 license = "UNLICENSED"
-
 include = [
   "CHANGELOG.md",
   "README.md",
