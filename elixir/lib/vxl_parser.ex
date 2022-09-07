@@ -1,5 +1,12 @@
 defmodule VXLParser do
-  use Rustler, otp_app: :vxl_parser, crate: :vxl_elixir
+  version = Mix.Project.config()[:version]
+
+  use RustlerPrecompiled,
+    otp_app: :vxl_parser,
+    crate: :vxl_elixir,
+    base_url: "https://github.com/vektor-finance/vxl-parser/releases/download/v#{version}",
+    force_build: System.get_env("RUSTLER_PRECOMPILATION_BUILD") in ["1", "true"],
+    version: version
 
   alias BuildInfo
 
