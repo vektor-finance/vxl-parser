@@ -1,5 +1,5 @@
 [package]
-name = "elixir"
+name = "vxl_elixir"
 version = "0.0.17"
 authors = ["Vektor Engineering <engineering@vektor.finance>"]
 edition = "2018"
@@ -24,7 +24,7 @@ path = "src/lib.rs"
 crate-type = ["cdylib"]
 
 [dependencies]
-rustler = "0.22.0"
+rustler = "0.26.0"
 serde_json = "1.0.59"
 
 [dependencies.core]
