@@ -13,17 +13,10 @@
 
 - [ ] Replace `serde_json` with proper conversion of types
 - [ ] Fix error handling - return :ok, :error atoms
-- [ ] Add CI build job
-- [ ] Add CI test job
 
 ## JS
 
 - [ ] Fix error handling
-- [ ] Add CI test job
-
-## Specification
-
-- [ ] Write a specification for the AST
 
 HCL Example:
 
