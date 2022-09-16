@@ -11,10 +11,6 @@ mod error;
 mod parser;
 mod timer;
 
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 #[wasm_bindgen(start)]
 pub fn init_console() {
   set_panic_hook();
