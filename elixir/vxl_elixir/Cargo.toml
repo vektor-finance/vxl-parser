@@ -32,7 +32,7 @@ path = "../../core"
 
 [build-dependencies]
 anyhow = "1.0.53"
-vergen = { version = "6.0.2", default-features = false, features = [
+vergen = { version = "7.4.2", default-features = false, features = [
   "build",
   "cargo",
   "git"

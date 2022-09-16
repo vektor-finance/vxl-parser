@@ -25,16 +25,16 @@ trace = ["nom-tracable/trace", "core/trace"]
 [dependencies]
 core = { path = "../core" }
 nom-tracable = "0.8.0"
-serde_json = "1.0.59"
-clap = { version = "3.0.13", features = ["cargo"] }
+serde_json = "1.0.85"
+clap = { version = "3.2.21", features = ["cargo"] }
 
 [[bin]]
 name = "vxl"
 path = "src/main.rs"
 
 [build-dependencies]
-anyhow = "1.0.53"
-vergen = { version = "6.0.2", default-features = false, features = [
+anyhow = "1.0.65"
+vergen = { version = "7.4.2", default-features = false, features = [
   "build",
   "git"
 ] }
