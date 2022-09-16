@@ -116,7 +116,6 @@ We rename the package in the outputted `package.json` during a publish step (for
 
 - [ ] Use [wasm-snip](https://rustwasm.github.io/book/reference/code-size.html#use-the-wasm-snip-tool)
 - [ ] Time profile
-- [ ] Compare [wee_alloc](https://github.com/rustwasm/wee_alloc)
 - [ ] See about switching logging to [console_log](https://github.com/iamcodemaker/console_log)
 - [ ] Test [compilation sizes](https://rustwasm.github.io/book/reference/code-size.html#optimizing-builds-for-code-size)
 
