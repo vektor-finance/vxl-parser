@@ -25,13 +25,13 @@ crate-type = ["cdylib"]
 
 [dependencies]
 rustler = "0.26.0"
-serde_json = "1.0.59"
+serde_json = "1.0.85"
 
 [dependencies.core]
 path = "../../core"
 
 [build-dependencies]
-anyhow = "1.0.53"
+anyhow = "1.0.65"
 vergen = { version = "7.4.2", default-features = false, features = [
   "build",
   "cargo",
