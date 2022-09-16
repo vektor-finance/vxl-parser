@@ -30,9 +30,9 @@ default = ["console_error_panic_hook"]
 path = "../core"
 
 [dependencies]
-wasm-bindgen = { version = "0.2.79", features = ["serde-serialize"] }
+wasm-bindgen = { version = "0.2.83", features = ["serde-serialize"] }
 web-sys = { version = "0.3.56", features = ["console"] }
-serde-wasm-bindgen = "0.4.2"
+serde-wasm-bindgen = "0.4.3"
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
 # all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
@@ -46,11 +46,11 @@ console_error_panic_hook = { version = "0.1.7", optional = true }
 wee_alloc = { version = "0.4.5", optional = true }
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.29"
+wasm-bindgen-test = "0.3.3"
 
 [build-dependencies]
-anyhow = "1.0.53"
-vergen = { version = "6.0.2", default-features = false, features = [
+anyhow = "1.0.65"
+vergen = { version = "7.4.2", default-features = false, features = [
     "build",
     "cargo",
     "git"
