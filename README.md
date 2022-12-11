@@ -36,8 +36,8 @@ It is **not** responsible for aspects such as:
 
 | Name                                               | Purpose        | Install                                                           | Version                         |
 | :------------------------------------------------- | :------------- | :---------------------------------------------------------------- | :------------------------------ |
-| [Rust](https://www.rust-lang.org/tools/install)    | Rust toolchain | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` | rustc `1.49.0`, rustup `1.23.1` |
-| [wasm-pack](https://github.com/rustwasm/wasm-pack) | WASM builder   | `cargo install wasm-pack`                                         | `0.10.0`                        |
+| [Rust](https://www.rust-lang.org/tools/install)    | Rust toolchain | `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \| sh` | rustc `1.63.0`, rustup `1.25.1` |
+| [wasm-pack](https://github.com/rustwasm/wasm-pack) | WASM builder   | `cargo install wasm-pack`                                         | `0.10.3`                        |
 
 ## Getting Started
 
