@@ -37,7 +37,7 @@ pub fn address(i: Span) -> Result {
     )),
     |(first, rest): (Span, Span)| {
       let mut a = String::from(*first.fragment());
-      a.push_str(*rest.fragment());
+      a.push_str(rest.fragment());
 
       Node::new(Token::Address(a), &first)
     },
