@@ -135,7 +135,7 @@ pub(super) fn number(i: Span) -> Result {
       let mut buf = String::from(*dec.fragment());
       if let Some(fract) = maybe_fract {
         buf.push('.');
-        buf.push_str(*fract.fragment());
+        buf.push_str(fract.fragment());
       }
 
       let n: N = buf.parse().map_err(|_| Err::Failure((dec, ErrorKind::Float)))?;

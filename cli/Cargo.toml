@@ -34,7 +34,7 @@ path = "src/main.rs"
 
 [build-dependencies]
 anyhow = "1.0.65"
-vergen = { version = "7.4.2", default-features = false, features = [
+vergen = { version = "7.5.0", default-features = false, features = [
   "build",
   "git"
 ] }
