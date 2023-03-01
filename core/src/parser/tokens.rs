@@ -111,6 +111,10 @@ pub enum Operator {
   GreaterEqual,
   LessEqual,
 
+  // Membership
+  In,
+  NotIn,
+
   // Postfix
   Elipsis,
   AttrAccess,
@@ -150,6 +154,10 @@ impl fmt::Display for Operator {
       Less => "<",
       GreaterEqual => ">=",
       LessEqual => "<=",
+
+      // Membership
+      In => "in",
+      NotIn => "not_in",
 
       // Postfix
       Elipsis => "...",
@@ -192,6 +200,10 @@ impl TryFrom<&str> for Operator {
       "<" => Ok(Operator::Less),
       ">=" => Ok(Operator::GreaterEqual),
       "<=" => Ok(Operator::LessEqual),
+
+      // Membership
+      "in" => Ok(Operator::In),
+      "not in" => Ok(Operator::NotIn),
 
       // Postfix
       "..." => Ok(Operator::Elipsis),
