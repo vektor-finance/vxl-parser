@@ -166,7 +166,7 @@ dependencies = [
 
 [[package]]
 name = "cli"
-version = "0.0.17"
+version = "0.0.18"
 dependencies = [
  "anyhow",
  "clap 3.0.13",
@@ -188,7 +188,7 @@ dependencies = [
 
 [[package]]
 name = "core"
-version = "0.0.17"
+version = "0.0.18"
 dependencies = [
  "criterion",
  "nom 6.1.2",
@@ -521,7 +521,7 @@ dependencies = [
 
 [[package]]
 name = "js"
-version = "0.0.17"
+version = "0.0.18"
 dependencies = [
  "anyhow",
  "console_error_panic_hook",
