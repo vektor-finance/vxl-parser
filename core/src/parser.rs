@@ -80,7 +80,7 @@ fn identifier(i: Span) -> Result {
     )),
     |(first, rest): (Span, Span)| {
       let mut m = String::from(*first.fragment());
-      m.push_str(*rest.fragment());
+      m.push_str(rest.fragment());
 
       Node::new(Token::Identifier(m.to_lowercase()), &first)
     },
