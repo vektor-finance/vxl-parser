@@ -98,8 +98,26 @@ fn other_operator(i: Span) -> Result {
 }
 
 #[tracable_parser]
+fn membership_operator(i: Span) -> Result {
+  map(alt((tag_no_case("in"), tag_no_case("not in"))), move |span: Span| {
+    let op = if span.fragment().to_lowercase() == "in" {
+      Operator::In
+    } else {
+      Operator::NotIn
+    };
+    Node::new(Token::Operator(op), &span)
+  })(i)
+}
+
+#[tracable_parser]
 pub(super) fn binary_operator(i: Span) -> Result {
-  alt((other_operator, arithmetic_operator, comparison_operator, logic_operator))(i)
+  alt((
+    other_operator,
+    membership_operator,
+    arithmetic_operator,
+    comparison_operator,
+    logic_operator,
+  ))(i)
 }
 
 pub(super) fn unary_operation(i: Span) -> Result {
@@ -263,6 +281,12 @@ mod test {
           case("[1, 2, 3] -- [1, 2, 3]", node!(binary_op!(list!(number!(1), number!(2), number!(3)), "--", list!(number!(1), number!(2), number!(3))))),
           case("add(1, 2) |> add(3)", node!(binary_op!(function!("add", none, number!(1), number!(2)), "|>", function!("add", none, number!(3))))),
           case("[1,2,3] |> sum()", node!(binary_op!(list!(number!(1), number!(2), number!(3)), "|>", function!("sum")))),
+          case("1 in [1,2,3]", node!(binary_op!(number!(1), "in", list!(number!(1), number!(2), number!(3))))),
+          case("-1.1 in [-1.1,2,3]", node!(binary_op!(number!(-1.1), "in", list!(number!(-1.1), number!(2), number!(3))))),
+          case("1 in foo()", node!(binary_op!(number!(1), "in", function!("foo")))),
+          case("1 not in [1,2,3]", node!(binary_op!(number!(1), "not in", list!(number!(1), number!(2), number!(3))))),
+          case("-1.1 not in [-1.1,2,3]", node!(binary_op!(number!(-1.1), "not in", list!(number!(-1.1), number!(2), number!(3))))),
+          case("1 not in foo()", node!(binary_op!(number!(1), "not in", function!("foo")))),
     )]
   fn test_binary_op(input: &'static str, expected: Node, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
