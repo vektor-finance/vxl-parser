@@ -287,6 +287,16 @@ mod test {
           case("1 not in [1,2,3]", node!(binary_op!(number!(1), "not in", list!(number!(1), number!(2), number!(3))))),
           case("-1.1 not in [-1.1,2,3]", node!(binary_op!(number!(-1.1), "not in", list!(number!(-1.1), number!(2), number!(3))))),
           case("1 not in foo()", node!(binary_op!(number!(1), "not in", function!("foo")))),
+          case(
+            "(1 in foo()) or (2 not in bar)",
+            node!(
+              binary_op!(
+                binary_op!(number!(1), "in", function!("foo")),
+                "||",
+                binary_op!(number!(2), "not in", ident!("bar"))
+              )
+            )
+          ),
     )]
   fn test_binary_op(input: &'static str, expected: Node, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
