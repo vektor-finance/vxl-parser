@@ -4,7 +4,7 @@ use std::rc::Rc;
 use nom::{
   branch::alt,
   bytes::complete::{is_a, tag, tag_no_case},
-  character::complete::{anychar, char, space0},
+  character::complete::{anychar, char, space0, space1},
   combinator::{map, recognize},
   error::ErrorKind,
   sequence::tuple,
@@ -99,7 +99,7 @@ fn other_operator(i: Span) -> Result {
 
 #[tracable_parser]
 fn membership_operator(i: Span) -> Result {
-  map(alt((tag_no_case("in"), tag_no_case("not in"))), move |span: Span| {
+  map(alt((tag_no_case("in"), recognize(tuple((tag_no_case("not"), space1, tag_no_case("in")))))), move |span: Span| {
     let op = if span.fragment().to_lowercase() == "in" {
       Operator::In
     } else {
@@ -285,6 +285,7 @@ mod test {
           case("-1.1 in [-1.1,2,3]", node!(binary_op!(number!(-1.1), "in", list!(number!(-1.1), number!(2), number!(3))))),
           case("1 in foo()", node!(binary_op!(number!(1), "in", function!("foo")))),
           case("1 not in [1,2,3]", node!(binary_op!(number!(1), "not in", list!(number!(1), number!(2), number!(3))))),
+          case("1 not    in [1,2,3]", node!(binary_op!(number!(1), "not in", list!(number!(1), number!(2), number!(3))))),
           case("-1.1 not in [-1.1,2,3]", node!(binary_op!(number!(-1.1), "not in", list!(number!(-1.1), number!(2), number!(3))))),
           case("1 not in foo()", node!(binary_op!(number!(1), "not in", function!("foo")))),
           case(
