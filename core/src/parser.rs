@@ -6,6 +6,7 @@ mod address;
 mod boolean;
 mod collection;
 mod comment;
+mod identifier;
 mod list;
 mod literal;
 mod node;
@@ -18,6 +19,7 @@ use address::address;
 use boolean::boolean;
 use collection::collection;
 use comment::line_comment;
+use identifier::identifier;
 use list::list;
 use literal::literal;
 use number::number;
@@ -30,7 +32,7 @@ pub use tokens::*;
 
 use nom::{
   branch::alt,
-  bytes::complete::{tag, tag_no_case, take, take_while, take_while1, take_while_m_n},
+  bytes::complete::{tag, tag_no_case, take},
   character::complete::{char, line_ending, multispace0, newline, space0, space1},
   combinator::{all_consuming, complete, eof, map, opt, recognize},
   error::ErrorKind,
@@ -46,46 +48,6 @@ pub type Span<'a> = LocatedSpan<&'a str, TracableInfo>;
 pub type SResult<O, E> = std::result::Result<O, E>;
 pub type Result<'a, I = Span<'a>, O = Node, E = (I, ErrorKind)> = SResult<(I, O), nom::Err<E>>;
 pub type OResult<'a> = SResult<Tree, Box<dyn Error + 'a>>;
-
-fn valid_ident_start_char_a(c: char) -> bool {
-  c.is_alphabetic() || matches!(c, '_')
-}
-
-fn valid_ident_char_a(c: char) -> bool {
-  c.is_alphanumeric() || matches!(c, '_' | '-')
-}
-
-fn valid_ident_start_char_1(c: char) -> bool {
-  c.is_ascii_digit()
-}
-
-fn valid_ident_char_1(c: char) -> bool {
-  c.is_alphabetic()
-}
-
-#[tracable_parser]
-fn identifier(i: Span) -> Result {
-  map(
-    alt((
-      // starts with alphabetic char
-      tuple((
-        take_while_m_n(1, 1, valid_ident_start_char_a),
-        take_while(valid_ident_char_a),
-      )),
-      // starts with a number
-      tuple((
-        take_while_m_n(1, 1, valid_ident_start_char_1),
-        take_while1(valid_ident_char_1),
-      )),
-    )),
-    |(first, rest): (Span, Span)| {
-      let mut m = String::from(*first.fragment());
-      m.push_str(rest.fragment());
-
-      Node::new(Token::Identifier(m.to_lowercase()), &first)
-    },
-  )(i)
-}
 
 #[tracable_parser]
 fn elipsis(i: Span) -> Result {
@@ -478,38 +440,8 @@ mod test {
   }
 
   #[rstest(input, expected,
-            case("test", ident!("test")),
-            case("TEST_LOWERCASING", ident!("test_lowercasing")),
-            case("test_with_underscores", ident!("test_with_underscores")),
-            case("test-with-dashes", ident!("test-with-dashes")),
-            case("test-14_with_numbers", ident!("test-14_with_numbers")),
-            case("1test", ident!("1test")),
-            case("a", ident!("a")),
-            case("a_", ident!("a_")),
-            case("1a", ident!("1a")),
-            case("1inch", ident!("1inch")),
-    )]
-  fn test_identfier(input: &'static str, expected: Token, info: TracableInfo) -> Result {
-    let (span, actual) = identifier(Span::new_extra(input, info))?;
-    assert_eq!(span.fragment().len(), 0);
-    assert_eq!(actual.token, expected);
-
-    Ok(())
-  }
-
-  #[rstest(input, case("1_"), case("11abc"), case("11111a"), case("11111a"))]
-  fn test_identifier_invalid(input: &'static str, info: TracableInfo) -> Result {
-    assert!(identifier(Span::new_extra(input, info)).is_err());
-    Ok(())
-  }
-
-  #[rstest(input, expected,
             case("test_1 = true", attr!("test_1", boolean!(true))),
             case("TEST_1 = true", attr!("test_1", boolean!(true))),
-            case(
-                r#"test-2 = "a test string""#,
-                attr!("test-2", string!("a test string")),
-            ),
             case(
                 "another_test = -193.5\n",
                 attr!("another_test", number!(-193.5)),
@@ -576,10 +508,6 @@ mod test {
   #[rstest(input, expected,
             case("test_1=true", opt!("test_1", boolean!(true))),
             case("TEST_1=true", opt!("test_1", boolean!(true))),
-            case(
-                r#"test-2= "a test string""#,
-                opt!("test-2", string!("a test string")),
-            ),
             case(
                 "another_test=-193.5",
                 opt!("another_test", number!(-193.5)),
@@ -648,6 +576,7 @@ mod test {
         case("_fun()", function!("_fun")),
         case("fun.sub()", function!("fun", "sub")),
         case("FuN.sUB()", function!("fun", "sub")),
+        case("fun(1foo_v1)", function!("fun", none, ident!("1foo_v1"))),
         case(
           "fun(1, 2, false, none, 1dent)",
           function!("fun", none, number!(1), number!(2), boolean!(false), ident!("none"), ident!("1dent"))
@@ -934,7 +863,8 @@ mod test {
         case(
           r#"fun.sub(
             1,
-            true
+            true,
+            1foo_v1
           )
 
           1 + 3
@@ -945,7 +875,7 @@ mod test {
             fun3(opt=1)
           )"#,
           vec![
-            node!(function!("fun", "sub", number!(1), boolean!(true))),
+            node!(function!("fun", "sub", number!(1), boolean!(true), ident!("1foo_v1"))),
             node!(binary_op!(number!(1), "+", number!(3))),
             node!(
               conditional!(

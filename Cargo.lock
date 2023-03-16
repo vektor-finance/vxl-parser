@@ -166,7 +166,7 @@ dependencies = [
 
 [[package]]
 name = "cli"
-version = "0.0.19"
+version = "0.0.20"
 dependencies = [
  "anyhow",
  "clap 3.0.13",
@@ -188,7 +188,7 @@ dependencies = [
 
 [[package]]
 name = "core"
-version = "0.0.19"
+version = "0.0.20"
 dependencies = [
  "criterion",
  "nom 6.1.2",
@@ -521,7 +521,7 @@ dependencies = [
 
 [[package]]
 name = "js"
-version = "0.0.19"
+version = "0.0.20"
 dependencies = [
  "anyhow",
  "console_error_panic_hook",
@@ -1368,7 +1368,7 @@ checksum = "6a02e4885ed3bc0f2de90ea6dd45ebcbb66dacffe03547fadbb0eeae2770887d"
 
 [[package]]
 name = "vxl_elixir"
-version = "0.0.19"
+version = "0.0.20"
 dependencies = [
  "anyhow",
  "core",
