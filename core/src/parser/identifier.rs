@@ -72,7 +72,9 @@ mod test {
     case("a", ident!("a")),
     case("a_", ident!("a_")),
     case("1a", ident!("1a")),
-    case("1inch", ident!("1inch")),
+    case("1foo", ident!("1foo")),
+    case("1foo1", ident!("1foo1")),
+    case("1foo_v1", ident!("1foo_v1")),
 )]
   fn test_identfier(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let (span, actual) = identifier(Span::new_extra(input, info))?;
