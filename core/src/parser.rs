@@ -576,6 +576,7 @@ mod test {
         case("_fun()", function!("_fun")),
         case("fun.sub()", function!("fun", "sub")),
         case("FuN.sUB()", function!("fun", "sub")),
+        case("fun(1foo_v1)", function!("fun", none, ident!("1foo_v1"))),
         case(
           "fun(1, 2, false, none, 1dent)",
           function!("fun", none, number!(1), number!(2), boolean!(false), ident!("none"), ident!("1dent"))
@@ -862,7 +863,8 @@ mod test {
         case(
           r#"fun.sub(
             1,
-            true
+            true,
+            1foo_v1
           )
 
           1 + 3
@@ -873,7 +875,7 @@ mod test {
             fun3(opt=1)
           )"#,
           vec![
-            node!(function!("fun", "sub", number!(1), boolean!(true))),
+            node!(function!("fun", "sub", number!(1), boolean!(true), ident!("1foo_v1"))),
             node!(binary_op!(number!(1), "+", number!(3))),
             node!(
               conditional!(
