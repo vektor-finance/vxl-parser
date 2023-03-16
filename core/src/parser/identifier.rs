@@ -48,3 +48,43 @@ pub(super) fn identifier(i: Span) -> Result {
     },
   )(i)
 }
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use nom_tracable::TracableInfo;
+  use rstest::{fixture, rstest};
+
+  pub(super) type Result = std::result::Result<(), Box<dyn std::error::Error>>;
+
+  #[fixture]
+  pub(super) fn info() -> TracableInfo {
+    TracableInfo::default()
+  }
+
+  #[rstest(input, expected,
+    case("test", ident!("test")),
+    case("TEST_LOWERCASING", ident!("test_lowercasing")),
+    case("test_with_underscores", ident!("test_with_underscores")),
+    case("test-with-dashes", ident!("test-with-dashes")),
+    case("test-14_with_numbers", ident!("test-14_with_numbers")),
+    case("1test", ident!("1test")),
+    case("a", ident!("a")),
+    case("a_", ident!("a_")),
+    case("1a", ident!("1a")),
+    case("1inch", ident!("1inch")),
+)]
+  fn test_identfier(input: &'static str, expected: Token, info: TracableInfo) -> Result {
+    let (span, actual) = identifier(Span::new_extra(input, info))?;
+    assert_eq!(span.fragment().len(), 0);
+    assert_eq!(actual.token, expected);
+
+    Ok(())
+  }
+
+  #[rstest(input, case("1_"), case("11abc"), case("11111a"), case("11111a"))]
+  fn test_identifier_invalid(input: &'static str, info: TracableInfo) -> Result {
+    assert!(identifier(Span::new_extra(input, info)).is_err());
+    Ok(())
+  }
+}
