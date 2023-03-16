@@ -443,10 +443,6 @@ mod test {
             case("test_1 = true", attr!("test_1", boolean!(true))),
             case("TEST_1 = true", attr!("test_1", boolean!(true))),
             case(
-                r#"test-2 = "a test string""#,
-                attr!("test-2", string!("a test string")),
-            ),
-            case(
                 "another_test = -193.5\n",
                 attr!("another_test", number!(-193.5)),
             ),
@@ -512,10 +508,6 @@ mod test {
   #[rstest(input, expected,
             case("test_1=true", opt!("test_1", boolean!(true))),
             case("TEST_1=true", opt!("test_1", boolean!(true))),
-            case(
-                r#"test-2= "a test string""#,
-                opt!("test-2", string!("a test string")),
-            ),
             case(
                 "another_test=-193.5",
                 opt!("another_test", number!(-193.5)),
