@@ -5,7 +5,7 @@ use nom::{bytes::complete::take_while1, combinator::map};
 use nom_tracable::tracable_parser;
 
 fn valid_ident_char_a(c: char) -> bool {
-  c.is_alphanumeric() || matches!(c, '_')
+  c.is_ascii_alphanumeric() || matches!(c, '_')
 }
 
 #[tracable_parser]
@@ -41,6 +41,7 @@ mod test {
     case("1foo", ident!("1foo")),
     case("1foo1", ident!("1foo1")),
     case("1foo_v1", ident!("1foo_v1")),
+    case("__", ident!("__")),
 )]
   fn test_identfier(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let (span, actual) = identifier(Span::new_extra(input, info))?;
@@ -50,7 +51,7 @@ mod test {
     Ok(())
   }
 
-  #[rstest(input, case(""))]
+  #[rstest(input, case(""), case("!"))]
   fn test_identifier_invalid(input: &'static str, info: TracableInfo) -> Result {
     assert!(identifier(Span::new_extra(input, info)).is_err());
     Ok(())
