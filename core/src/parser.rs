@@ -6,6 +6,7 @@ mod address;
 mod boolean;
 mod collection;
 mod comment;
+mod identifier;
 mod list;
 mod literal;
 mod node;
@@ -18,6 +19,7 @@ use address::address;
 use boolean::boolean;
 use collection::collection;
 use comment::line_comment;
+use identifier::identifier;
 use list::list;
 use literal::literal;
 use number::number;
@@ -30,7 +32,7 @@ pub use tokens::*;
 
 use nom::{
   branch::alt,
-  bytes::complete::{tag, tag_no_case, take, take_while, take_while1, take_while_m_n},
+  bytes::complete::{tag, tag_no_case, take},
   character::complete::{char, line_ending, multispace0, newline, space0, space1},
   combinator::{all_consuming, complete, eof, map, opt, recognize},
   error::ErrorKind,
@@ -46,46 +48,6 @@ pub type Span<'a> = LocatedSpan<&'a str, TracableInfo>;
 pub type SResult<O, E> = std::result::Result<O, E>;
 pub type Result<'a, I = Span<'a>, O = Node, E = (I, ErrorKind)> = SResult<(I, O), nom::Err<E>>;
 pub type OResult<'a> = SResult<Tree, Box<dyn Error + 'a>>;
-
-fn valid_ident_start_char_a(c: char) -> bool {
-  c.is_alphabetic() || matches!(c, '_')
-}
-
-fn valid_ident_char_a(c: char) -> bool {
-  c.is_alphanumeric() || matches!(c, '_' | '-')
-}
-
-fn valid_ident_start_char_1(c: char) -> bool {
-  c.is_ascii_digit()
-}
-
-fn valid_ident_char_1(c: char) -> bool {
-  c.is_alphabetic()
-}
-
-#[tracable_parser]
-fn identifier(i: Span) -> Result {
-  map(
-    alt((
-      // starts with alphabetic char
-      tuple((
-        take_while_m_n(1, 1, valid_ident_start_char_a),
-        take_while(valid_ident_char_a),
-      )),
-      // starts with a number
-      tuple((
-        take_while_m_n(1, 1, valid_ident_start_char_1),
-        take_while1(valid_ident_char_1),
-      )),
-    )),
-    |(first, rest): (Span, Span)| {
-      let mut m = String::from(*first.fragment());
-      m.push_str(rest.fragment());
-
-      Node::new(Token::Identifier(m.to_lowercase()), &first)
-    },
-  )(i)
-}
 
 #[tracable_parser]
 fn elipsis(i: Span) -> Result {

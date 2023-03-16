@@ -99,14 +99,20 @@ fn other_operator(i: Span) -> Result {
 
 #[tracable_parser]
 fn membership_operator(i: Span) -> Result {
-  map(alt((tag_no_case("in"), recognize(tuple((tag_no_case("not"), space1, tag_no_case("in")))))), move |span: Span| {
-    let op = if span.fragment().to_lowercase() == "in" {
-      Operator::In
-    } else {
-      Operator::NotIn
-    };
-    Node::new(Token::Operator(op), &span)
-  })(i)
+  map(
+    alt((
+      tag_no_case("in"),
+      recognize(tuple((tag_no_case("not"), space1, tag_no_case("in")))),
+    )),
+    move |span: Span| {
+      let op = if span.fragment().to_lowercase() == "in" {
+        Operator::In
+      } else {
+        Operator::NotIn
+      };
+      Node::new(Token::Operator(op), &span)
+    },
+  )(i)
 }
 
 #[tracable_parser]
