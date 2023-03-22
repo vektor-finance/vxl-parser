@@ -19,7 +19,7 @@ defmodule VXLParser.MixProject do
   defp deps,
     do: [
       {:jason, "~> 1.0"},
-      {:rustler, "~> 0.26"},
+      {:rustler, "~> 0.27.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.13", only: [:test], runtime: false}
     ]
