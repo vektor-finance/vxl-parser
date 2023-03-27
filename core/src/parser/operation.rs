@@ -7,7 +7,7 @@ use nom::{
   character::complete::{anychar, char, space0, space1},
   combinator::{map, recognize},
   error::ErrorKind,
-  sequence::tuple,
+  sequence::{terminated, tuple},
   Err,
 };
 use nom_locate::position;
@@ -25,9 +25,10 @@ pub(super) fn sign(i: Span) -> Result {
 #[tracable_parser]
 fn negation(i: Span) -> Result {
   let (i, start) = position(i)?;
-  map(alt((tag("!"), tag_no_case("not"))), move |_| {
-    Node::new(Token::Operator(Operator::Not), &start)
-  })(i)
+  map(
+    alt((tag("!"), terminated(tag_no_case("not"), space1))),
+    move |_| Node::new(Token::Operator(Operator::Not), &start),
+  )(i)
 }
 
 #[tracable_parser]
@@ -200,7 +201,7 @@ mod test {
         case("!true", node!(unary_op!("!", boolean!(true)))),
         case("not true", node!(unary_op!("!", boolean!(true)))),
         case("![1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false))))),
-        case("not [1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false)))))
+        case("not   [1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false)))))
     )]
   fn test_unary_op(input: &'static str, expected: Node, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
