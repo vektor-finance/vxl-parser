@@ -671,6 +671,7 @@ mod test {
         case(r#"fun(and_label)"#, function!("fun", none, ident!("and_label"))),
         case(r#"fun(or_my_label)"#, function!("fun", none, ident!("or_my_label"))),
         case(r#"fun(in_my_label)"#, function!("fun", none, ident!("in_my_label"))),
+        case(r#"fun(not(not_my_label))"#, function!("fun", none, function!("not", none, ident!("not_my_label")))),
     )]
   fn test_function(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let input = Span::new_extra(input, info);
