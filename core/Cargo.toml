@@ -1,6 +1,6 @@
 [package]
 name = "core"
-version = "0.0.20"
+version = "0.0.21"
 authors = ["Vektor Engineering <engineering@vektor.finance>"]
 edition = "2018"
 homepage = "https://vektor.finance"
