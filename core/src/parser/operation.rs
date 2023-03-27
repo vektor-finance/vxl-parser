@@ -4,7 +4,7 @@ use std::rc::Rc;
 use nom::{
   branch::alt,
   bytes::complete::{is_a, tag, tag_no_case},
-  character::complete::{anychar, char, multispace1, space0, space1},
+  character::complete::{anychar, char, space0, space1},
   combinator::{map, recognize},
   error::ErrorKind,
   sequence::{terminated, tuple},
@@ -26,7 +26,7 @@ pub(super) fn sign(i: Span) -> Result {
 fn negation(i: Span) -> Result {
   let (i, start) = position(i)?;
   map(
-    alt((tag("!"), terminated(tag_no_case("not"), multispace1))),
+    alt((tag("!"), terminated(tag_no_case("not"), space1))),
     move |_| Node::new(Token::Operator(Operator::Not), &start),
   )(i)
 }
