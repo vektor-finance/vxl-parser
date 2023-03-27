@@ -200,7 +200,7 @@ mod test {
         case("!true", node!(unary_op!("!", boolean!(true)))),
         case("not true", node!(unary_op!("!", boolean!(true)))),
         case("![1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false))))),
-        case("not [1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false)))))
+        case("not   [1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false)))))
     )]
   fn test_unary_op(input: &'static str, expected: Node, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
