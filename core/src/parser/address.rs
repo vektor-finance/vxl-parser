@@ -22,7 +22,7 @@ pub fn address(i: Span) -> Result {
       let mut a = String::from(*first.fragment());
       a.push_str(rest.fragment());
 
-      Node::new(Token::Address(a.to_lowercase()), &first)
+      Node::new(Token::Address(a), &first)
     },
   )(i)
 }
@@ -42,7 +42,7 @@ mod test {
 
   #[rstest(input, expected,
             case("0xcac725bef4f114f728cbcfd744a731c2a463c3fc", address!("0xcac725bef4f114f728cbcfd744a731c2a463c3fc")),
-            case("0xCAC725bef4f114f728cbcfd744a731c2a463C3FC", address!("0xcac725bef4f114f728cbcfd744a731c2a463c3fc"))
+            case("0xCAC725bef4f114f728cbcfd744a731c2a463C3FC", address!("0xCAC725bef4f114f728cbcfd744a731c2a463C3FC"))
     )]
   fn test_address_valid(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let (span, actual) = address(Span::new_extra(input, info))?;
