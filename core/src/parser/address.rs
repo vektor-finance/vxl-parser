@@ -1,6 +1,5 @@
 use nom::{
-  branch::alt,
-  bytes::complete::{tag_no_case, take_while},
+  bytes::complete::{tag_no_case, take_while_m_n},
   combinator::map,
   sequence::tuple,
 };
@@ -11,30 +10,14 @@ use nom_tracable::tracable_parser;
 
 use super::{Node, Result, Span, Token};
 
-fn valid_dns_char(c: char) -> bool {
-  c.is_alphanumeric()
-}
-
 fn valid_address_char(c: char) -> bool {
   c.is_ascii_hexdigit()
 }
 
-// #[allow(dead_code)]
-// fn valid_base58(i: Span) -> bool {
-//   match decode(i.fragment()).into_vec() {
-//     Ok(_) => true,
-//     _ => false,
-//   }
-// }
-
 #[tracable_parser]
 pub fn address(i: Span) -> Result {
   map(
-    alt((
-      // Ethereum
-      tuple((tag_no_case("0x"), take_while(valid_address_char))), // Ethereum
-      tuple((take_while(valid_dns_char), tag_no_case(".eth"))),   // ENS
-    )),
+    tuple((tag_no_case("0x"), take_while_m_n(40, 40, valid_address_char))), // Ethereum EOA: ^(0x)?[0-9a-fA-F]{40}$
     |(first, rest): (Span, Span)| {
       let mut a = String::from(*first.fragment());
       a.push_str(rest.fragment());
@@ -58,14 +41,19 @@ mod test {
   }
 
   #[rstest(input, expected,
-            case("0xcac725bef4f114f728cbcfd744a731c2a463c3fc", address!("0xcac725bef4f114f728cbcfd744a731c2a463c3fc")),
-            case("vektor.eth", address!("vektor.eth")),
+            case("0xcac725bef4f114f728cbcfd744a731c2a463c3fc", address!("0xcac725bef4f114f728cbcfd744a731c2a463c3fc"))
     )]
-  fn test_address(input: &'static str, expected: Token, info: TracableInfo) -> Result {
+  fn test_address_valid(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let (span, actual) = address(Span::new_extra(input, info))?;
     assert_eq!(span.fragment().len(), 0);
     assert_eq!(actual.token, expected);
 
+    Ok(())
+  }
+
+  #[rstest(input, case(""), case("0x"), case("0X"), case("0xcac725bef4f114f7a463c3fc"))]
+  fn test_address_invalid(input: &'static str, info: TracableInfo) -> Result {
+    assert!(address(Span::new_extra(input, info)).is_err());
     Ok(())
   }
 }

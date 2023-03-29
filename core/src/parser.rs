@@ -624,13 +624,13 @@ mod test {
             opt!("faz", ident!("test"))
           )
         ),
-        case("fun.sub(123, vektor.eth, 0xcac725bef4f114f728cbcfd744a731c2a463c3fc)",
+        case("fun.sub(123, 0xcac725bef4f114f728cbcfd744a731c2a463c3fc, 0x)",
           function!(
             "fun",
             "sub",
             number!(123),
-            address!("vektor.eth"),
-            address!("0xcac725bef4f114f728cbcfd744a731c2a463c3fc")
+            address!("0xcac725bef4f114f728cbcfd744a731c2a463c3fc"),
+            ident!("0x")
           )
         ),
         case("fun((1 + 1))", function!("fun", none, binary_op!(number!(1), "+", number!(1)))),
