@@ -50,11 +50,6 @@ pub type Result<'a, I = Span<'a>, O = Node, E = (I, ErrorKind)> = SResult<(I, O)
 pub type OResult<'a> = SResult<Tree, Box<dyn Error + 'a>>;
 
 #[tracable_parser]
-fn elipsis(i: Span) -> Result {
-  map(tag("..."), |span| Node::new(Token::Operator(Operator::Elipsis), &span))(i)
-}
-
-#[tracable_parser]
 fn function_arg(i: Span) -> Result {
   alt((option, operation, expr_term))(i)
 }
@@ -76,7 +71,6 @@ fn function(i: Span) -> Result {
             ),
             function_arg,
           )),
-          opt(elipsis),
         ))),
         preceded(multispace0, char(')')),
       ),
@@ -91,19 +85,9 @@ fn function(i: Span) -> Result {
         args: Vec::new(),
       };
 
-      if let Some((first, mut tail, maybe_elips)) = args {
+      if let Some((first, mut tail)) = args {
         f.args.push(first);
         f.args.append(&mut tail);
-
-        if let Some(elips) = maybe_elips {
-          let last = Rc::new(f.args.pop().unwrap());
-          let op = UnaryOp {
-            operator: Rc::new(elips),
-            operand: Rc::clone(&last),
-          };
-          let last = Node::from_node(Token::UnaryOp(op), &last);
-          f.args.push(last);
-        }
       }
 
       Node::from_node(Token::Function(f), &name)
@@ -148,64 +132,12 @@ fn index_access(i: Span) -> Result {
 }
 
 #[tracable_parser]
-fn attr_splat(i: Span) -> Result {
-  let (i, span) = position(i)?;
-  let node = Node::new(Token::Operator(Operator::AttrSplat), &span);
-  preceded(
-    tag(".*"),
-    fold_many0(attr_access, node, |node, attr| {
-      let attr_op = attr.token.as_unary_op().cloned().unwrap();
-      let node = Rc::new(node);
-      let op = BinaryOp {
-        left: Rc::clone(&node),
-        operator: attr_op.operator,
-        right: attr_op.operand,
-      };
-
-      Node::from_node(Token::BinaryOp(op), &node)
-    }),
-  )(i)
-}
-
-#[tracable_parser]
-fn full_splat(i: Span) -> Result {
-  let (i, span) = position(i)?;
-  let node = Node::new(Token::Operator(Operator::FullSplat), &span);
-  preceded(
-    tag("[*]"),
-    fold_many0(alt((attr_access, index_access)), node, |node, access| {
-      let access_op = access.token.as_unary_op().cloned().unwrap();
-      let node = Rc::new(node);
-      let op = BinaryOp {
-        left: Rc::clone(&node),
-        operator: access_op.operator,
-        right: access_op.operand,
-      };
-
-      Node::from_node(Token::BinaryOp(op), &node)
-    }),
-  )(i)
-}
-
-#[tracable_parser]
 fn expr_postfix(i: Span) -> Result {
   let (_, head): (_, Span) = take(2usize)(i)?;
   let mut head = head.fragment().chars();
   match head.next() {
-    Some('.') => {
-      if let Some('*') = head.next() {
-        attr_splat(i)
-      } else {
-        attr_access(i)
-      }
-    }
-    Some('[') => {
-      if let Some('*') = head.next() {
-        full_splat(i)
-      } else {
-        index_access(i)
-      }
-    }
+    Some('.') => attr_access(i),
+    Some('[') => index_access(i),
     _ => Err(Err::Error((i, ErrorKind::Alt))),
   }
 }
@@ -449,44 +381,6 @@ mod test {
             case(
                 "testing = var.foo\n",
                 attr!("testing", binary_op!(ident!("var"), ".", ident!("foo")))
-            ),
-            case(
-                "testing = foo.*.bar.baz",
-                attr!(
-                    "testing",
-                    binary_op!(
-                        ident!("foo"),
-                        ".",
-                        binary_op!(
-                            binary_op!(
-                                Token::Operator(Operator::AttrSplat),
-                                ".",
-                                ident!("bar")
-                            ),
-                            ".",
-                            ident!("baz")
-                        )
-                    )
-                )
-            ),
-            case (
-                "testing = foo[*].bar.baz",
-                attr!(
-                    "testing",
-                    binary_op!(
-                        ident!("foo"),
-                        ".",
-                        binary_op!(
-                            binary_op!(
-                                Token::Operator(Operator::FullSplat),
-                                ".",
-                                ident!("bar")
-                            ),
-                            ".",
-                            ident!("baz")
-                        )
-                    )
-                )
             )
     )]
   fn test_attribute(input: &'static str, expected: Token, info: TracableInfo) -> Result {
@@ -516,44 +410,6 @@ mod test {
                 "testing=var.foo",
                 opt!("testing", binary_op!(ident!("var"), ".", ident!("foo")))
             ),
-            case(
-                "testing=foo.*.bar.baz",
-                opt!(
-                    "testing",
-                    binary_op!(
-                        ident!("foo"),
-                        ".",
-                        binary_op!(
-                            binary_op!(
-                                Token::Operator(Operator::AttrSplat),
-                                ".",
-                                ident!("bar")
-                            ),
-                            ".",
-                            ident!("baz")
-                        )
-                    )
-                )
-            ),
-            case (
-                "testing=foo[*].bar.baz",
-                opt!(
-                    "testing",
-                    binary_op!(
-                        ident!("foo"),
-                        ".",
-                        binary_op!(
-                            binary_op!(
-                                Token::Operator(Operator::FullSplat),
-                                ".",
-                                ident!("bar")
-                            ),
-                            ".",
-                            ident!("baz")
-                        )
-                    )
-                )
-            )
     )]
   fn test_option(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
@@ -586,10 +442,6 @@ mod test {
         case("_fun.sub(1, 2, 3)", function!("_fun", "sub", number!(1), number!(2), number!(3))),
         case("foo(false)", function!("foo", none, boolean!(false))),
         case("foo(!false)", function!("foo", none, unary_op!("!", boolean!(false)))),
-        case(
-          "bar([1, 2, 3]...)",
-          function!("bar", none, unary_op!("...", list!(number!(1), number!(2), number!(3))))
-        ),
         case("fun(1, foo=123)", function!("fun", none, number!(1), opt!("foo", number!(123)))),
         case("fun.sub(1.0, foo=fun2.sub(\"thing\", foo2=fun3(false)))",
           function!(

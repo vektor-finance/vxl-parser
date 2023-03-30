@@ -116,11 +116,8 @@ pub enum Operator {
   NotIn,
 
   // Postfix
-  Elipsis,
   AttrAccess,
   IndexAccess,
-  AttrSplat,
-  FullSplat,
 
   // List,
   Concatenate,
@@ -160,11 +157,8 @@ impl fmt::Display for Operator {
       NotIn => "not_in",
 
       // Postfix
-      Elipsis => "...",
       AttrAccess => ".",
-      AttrSplat => ".*",
       IndexAccess => "[",
-      FullSplat => "[*]",
 
       // Other
       Concatenate => "++",
@@ -206,11 +200,8 @@ impl TryFrom<&str> for Operator {
       "not in" => Ok(Operator::NotIn),
 
       // Postfix
-      "..." => Ok(Operator::Elipsis),
       "." => Ok(Operator::AttrAccess),
-      ".*" => Ok(Operator::AttrSplat),
       "[" => Ok(Operator::IndexAccess),
-      "[*]" => Ok(Operator::FullSplat),
 
       // Other
       "++" => Ok(Operator::Concatenate),
