@@ -121,9 +121,7 @@ fn is_digit_or_underscore(c: char) -> bool {
   c.is_digit(10) || c == '_'
 }
 
-// TODO: factor this out to multiple parsers
-// TODO: The negative sign is technically a uniary operation as defined by the spec
-// and so should be factored out into the expression syntax parser once that is in
+// TODO: refactor to multiple parsers
 #[tracable_parser]
 pub(super) fn number(i: Span) -> Result {
   let start = i;
