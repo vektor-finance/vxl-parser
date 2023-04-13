@@ -216,7 +216,7 @@ mod test {
         case("-1e-4", number!(-0.0001)),
         case("0.333333333333333334", number!(0.333333333333333334)),
         case("1_0", number!(1_0)),
-        case("1_000_000_00", number!(1_000_000_00)),
+        case("1_000_000_00.0001", number!(1_000_000_00.00_01)),
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
