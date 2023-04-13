@@ -245,6 +245,8 @@ mod test {
         case(N::Decimal(dec!(0.000008599999999999999)), ("decimal", "0.000008599999999999999")),
         case(N::Decimal(dec!(0.3333333333333333333333333333)), ("decimal", "0.3333333333333333333333333333")),
         case(N::Decimal(dec!(-0.0000123)), ("decimal", "-0.0000123")),
+        case(N::Decimal(dec!(-0.0_000_123)), ("decimal", "-0.0000123")),
+        case(N::Decimal(dec!(-1_000_0.0_000_123)), ("decimal", "-10000.0000123")),
   )]
   fn test_serialize(input: N, expected: (&'static str, &'static str)) -> Result {
     let (t, v) = expected;
