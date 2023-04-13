@@ -1,7 +1,7 @@
 defmodule VXLParser.MixProject do
   use Mix.Project
 
-  @version "0.0.22"
+  @version "0.0.23"
 
   def project do
     [
