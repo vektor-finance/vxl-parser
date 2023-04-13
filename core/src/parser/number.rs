@@ -129,7 +129,10 @@ pub(super) fn number(i: Span) -> Result {
 
   let (i, num) = map(
     terminated(
-      tuple((take_while1(is_digit_or_underscore), opt(preceded(char('.'), take_while1(is_digit_or_underscore))))),
+      tuple((
+        take_while1(is_digit_or_underscore),
+        opt(preceded(char('.'), take_while1(is_digit_or_underscore))),
+      )),
       // allows identifiers starting with numbers
       not(preceded(opt(tag_no_case("e")), alpha1)),
     ),
@@ -216,7 +219,7 @@ mod test {
         case("1e-4", number!(1e-4)),
         case("-1e-4", number!(-1e-4)),
         case("-1_000e-4", number!(-1_000e-4)),
-        case("-1e0_1", number!(-1e0_1)),
+        case("-1e0_1", number!(-10)),
         case("0.333333333333333334", number!(0.333333333333333334))
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
