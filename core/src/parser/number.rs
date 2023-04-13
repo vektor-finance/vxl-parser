@@ -2,7 +2,7 @@ use std::{rc::Rc, str::FromStr};
 
 use nom::{
   bytes::complete::{tag_no_case, take_while1},
-  character::complete::{alpha1, char, digit1},
+  character::complete::{alpha1, char},
   combinator::{map, not, opt},
   error::ErrorKind,
   sequence::{pair, preceded, terminated, tuple},
@@ -98,11 +98,15 @@ impl Serialize for N {
   }
 }
 
+fn is_digit_or_underscore(c: char) -> bool {
+  c.is_digit(10) || c == '_'
+}
+
 #[tracable_parser]
 fn exponent(i: Span) -> Result<Span, i64> {
-  let (i, (maybe_sign, num)) = preceded(tag_no_case("e"), pair(opt(sign), digit1))(i)?;
+  let (i, (maybe_sign, num)) = preceded(tag_no_case("e"), pair(opt(sign), take_while1(is_digit_or_underscore)))(i)?;
 
-  let n: i64 = (*num.fragment())
+  let n: i64 = (*num.fragment().replace("_", ""))
     .parse()
     .map_err(|_| Err::Failure((i, ErrorKind::Digit)))?;
 
@@ -117,10 +121,6 @@ fn exponent(i: Span) -> Result<Span, i64> {
   }
 }
 
-fn is_digit_or_underscore(c: char) -> bool {
-  c.is_digit(10) || c == '_'
-}
-
 // TODO: refactor to multiple parsers
 #[tracable_parser]
 pub(super) fn number(i: Span) -> Result {
@@ -129,7 +129,10 @@ pub(super) fn number(i: Span) -> Result {
 
   let (i, num) = map(
     terminated(
-      tuple((take_while1(is_digit_or_underscore), opt(preceded(char('.'), take_while1(is_digit_or_underscore))))),
+      tuple((
+        take_while1(is_digit_or_underscore),
+        opt(preceded(char('.'), take_while1(is_digit_or_underscore))),
+      )),
       // allows identifiers starting with numbers
       not(preceded(opt(tag_no_case("e")), alpha1)),
     ),
@@ -213,9 +216,10 @@ mod test {
         case("1.7e8", number!(170000000)),
         case("-17E10", number!(-170000000000)),
         case("8.6e-6", number!(0.0000086)),
-        case("1e-4", number!(0.0001)),
-        case("-1e-4", number!(-0.0001)),
-        case("-1_000e-4", number!(-0.1)),
+        case("1e-4", number!(1e-4)),
+        case("-1e-4", number!(-1e-4)),
+        case("-1_000e-4", number!(-1_000e-4)),
+        case("-1e0_1", number!(-10)),
         case("0.333333333333333334", number!(0.333333333333333334))
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
