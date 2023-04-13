@@ -11,8 +11,7 @@ use nom::{
 use nom_tracable::tracable_parser;
 use rust_decimal::prelude::*;
 
-use super::{n::N, operation::sign};
-use super::{Node, Operator, Result, Span, Token, UnaryOp};
+use super::{n::N, operation::sign, Node, Operator, Result, Span, Token, UnaryOp};
 
 fn is_digit_or_underscore(c: char) -> bool {
   c.is_digit(10) || c == '_'
