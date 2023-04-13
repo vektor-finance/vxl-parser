@@ -131,7 +131,7 @@ pub(super) fn number(i: Span) -> Result {
 
   let (i, num) = map(
     terminated(
-      tuple((take_while1(is_digit_or_underscore), opt(preceded(char('.'), digit1)))),
+      tuple((take_while1(is_digit_or_underscore), opt(preceded(char('.'), take_while1(is_digit_or_underscore))))),
       // allows identifiers starting with numbers
       not(preceded(opt(tag_no_case("e")), alpha1)),
     ),
@@ -139,7 +139,7 @@ pub(super) fn number(i: Span) -> Result {
       let mut buf = dec.fragment().replace("_", "");
       if let Some(fract) = maybe_fract {
         buf.push('.');
-        buf.push_str(fract.fragment());
+        buf.push_str(&fract.fragment().replace("_", ""));
       }
 
       let n: N = buf.parse().map_err(|_| Err::Failure((dec, ErrorKind::Float)))?;
@@ -207,6 +207,9 @@ mod test {
         case("47", number!(47)),
         case("17.3809", number!(17.3809)),
         case("17892037", number!(17892037)),
+        case("1_0", number!(1_0)),
+        case("1_000_000_00", number!(1_000_000_00)),
+        case("1_000.0_100_001", number!(1_000.0_100_001)),
         case("-38", number!(-38)),
         case("-471.399", number!(-471.399)),
         case("1.7e8", number!(170000000)),
@@ -214,9 +217,8 @@ mod test {
         case("8.6e-6", number!(0.0000086)),
         case("1e-4", number!(0.0001)),
         case("-1e-4", number!(-0.0001)),
-        case("0.333333333333333334", number!(0.333333333333333334)),
-        case("1_0", number!(1_0)),
-        case("1_000_000_00.0001", number!(1_000_000_00.00_01)),
+        case("-1_000e-4", number!(-0.1)),
+        case("0.333333333333333334", number!(0.333333333333333334))
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
