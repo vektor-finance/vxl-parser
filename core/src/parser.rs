@@ -9,6 +9,7 @@ mod comment;
 mod identifier;
 mod list;
 mod literal;
+mod n;
 mod node;
 mod number;
 mod operation;
@@ -22,12 +23,12 @@ use comment::line_comment;
 use identifier::identifier;
 use list::list;
 use literal::literal;
+use n::N;
 use number::number;
 use operation::operation;
 use string::string;
 
 pub use node::{Node, Tree};
-pub use number::N;
 pub use tokens::*;
 
 use nom::{
