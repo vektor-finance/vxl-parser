@@ -1,7 +1,7 @@
 use std::{rc::Rc, str::FromStr};
 
 use nom::{
-  bytes::complete::tag_no_case,
+  bytes::complete::{tag_no_case, take_while1},
   character::complete::{alpha1, char, digit1},
   combinator::{map, not, opt},
   error::ErrorKind,
@@ -117,6 +117,10 @@ fn exponent(i: Span) -> Result<Span, i64> {
   }
 }
 
+fn is_digit_or_underscore(c: char) -> bool {
+  c.is_digit(10) || c == '_'
+}
+
 // TODO: factor this out to multiple parsers
 // TODO: The negative sign is technically a uniary operation as defined by the spec
 // and so should be factored out into the expression syntax parser once that is in
@@ -127,12 +131,12 @@ pub(super) fn number(i: Span) -> Result {
 
   let (i, num) = map(
     terminated(
-      tuple((digit1, opt(preceded(char('.'), digit1)))),
+      tuple((take_while1(is_digit_or_underscore), opt(preceded(char('.'), digit1)))),
       // allows identifiers starting with numbers
       not(preceded(opt(tag_no_case("e")), alpha1)),
     ),
     |(dec, maybe_fract): (Span, Option<Span>)| {
-      let mut buf = String::from(*dec.fragment());
+      let mut buf = dec.fragment().replace("_", "");
       if let Some(fract) = maybe_fract {
         buf.push('.');
         buf.push_str(fract.fragment());
@@ -211,6 +215,8 @@ mod test {
         case("1e-4", number!(0.0001)),
         case("-1e-4", number!(-0.0001)),
         case("0.333333333333333334", number!(0.333333333333333334)),
+        case("1_0", number!(1_0)),
+        case("1_000_000_00", number!(1_000_000_00)),
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
@@ -222,17 +228,20 @@ mod test {
   }
 
   #[rstest(input, expected,
+        case(N::Int(47), ("int", "47")),
+        case(N::Int(17892037), ("int", "17892037")),
+        case(N::Int(-38), ("int", "-38")),
+        case(N::Int(170000000), ("int", "170000000")),
+        case(N::Int(-170000000000), ("int", "-170000000000")),
+        case(N::Int(1_0), ("int", "10")),
+        case(N::Int(-1_0), ("int", "-10")),
+        case(N::Int(-1_700_000_000_00), ("int", "-170000000000")),
         case(N::Decimal(dec!(1)), ("decimal", "1")),
         case(N::Decimal(dec!(1.0)), ("decimal", "1.0")),
         case(N::Decimal(dec!(1.00)), ("decimal", "1.00")),
         case(N::Decimal(dec!(1.23)), ("decimal", "1.23")),
-        case(N::Int(47), ("int", "47")),
         case(N::Decimal(dec!(17.3809)), ("decimal", "17.3809")),
-        case(N::Int(17892037), ("int", "17892037")),
-        case(N::Int(-38), ("int", "-38")),
         case(N::Decimal(dec!(-471.399)), ("decimal", "-471.399")),
-        case(N::Int(170000000), ("int", "170000000")),
-        case(N::Int(-170000000000), ("int", "-170000000000")),
         case(N::Decimal(dec!(0.000008599999999999999)), ("decimal", "0.000008599999999999999")),
         case(N::Decimal(dec!(0.3333333333333333333333333333)), ("decimal", "0.3333333333333333333333333333")),
         case(N::Decimal(dec!(-0.0000123)), ("decimal", "-0.0000123")),
