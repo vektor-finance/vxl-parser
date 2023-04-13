@@ -696,7 +696,7 @@ mod test {
 
           1dentifier
 
-          1 + 3 # comment 2
+          1 + 3_000.0_0_01 # comment 2
 
           # comment 3
 
@@ -704,7 +704,7 @@ mod test {
           vec![
             node!(function!("fun", "sub", number!(1), boolean!(true))),
             node!(ident!("1dentifier")),
-            node!(binary_op!(number!(1), "+", number!(3))),
+            node!(binary_op!(number!(1), "+", number!(3_000.0_0_01))),
             node!(
               conditional!(
                 binary_op!(
