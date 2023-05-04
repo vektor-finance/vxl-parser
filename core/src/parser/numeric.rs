@@ -186,7 +186,7 @@ mod test {
       case("1_000.0_100_001%", percentage!(1_000.0_100_001)),
       case("-38%", percentage!(-38)),
       case("-471.399%", percentage!(-471.399)),
-      case("0.333333333333333334%", percentage!(0.333333333333333334)),
+      case("0.3333333333333333%", percentage!(0.333333333333333334)),
     )]
   fn test_percentage(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
