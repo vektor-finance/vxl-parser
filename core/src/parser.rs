@@ -466,7 +466,7 @@ mod test {
                   )
               )
           )),
-        case("fun.sub(123, foo=321, bar=false, baz=\"a test string\", faz=test)",
+        case("fun.sub(123, foo=321, bar=false, baz=\"a test string\", faz=test, foz=-1_000%e-4)",
           function!(
             "fun",
             "sub",
@@ -474,7 +474,8 @@ mod test {
             opt!("foo", number!(321)),
             opt!("bar", boolean!(false)),
             opt!("baz", string!("a test string")),
-            opt!("faz", ident!("test"))
+            opt!("faz", ident!("test")),
+            opt!("foz", percentage!(-1_000e-4))
           )
         ),
         case("fun.sub(123, 0xcac725bef4f114f728cbcfd744a731c2a463c3fc, 0x)",
