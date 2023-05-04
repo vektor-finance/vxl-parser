@@ -1,4 +1,5 @@
 use nom::{
+  branch::alt,
   bytes::complete::{tag_no_case, take_while1},
   character::complete::{alpha1, char},
   combinator::{map, not, opt},
@@ -6,13 +7,23 @@ use nom::{
   sequence::{pair, preceded, terminated, tuple},
   Err,
 };
+use nom_locate::position;
 use nom_tracable::tracable_parser;
 use rust_decimal::prelude::*;
 
-use super::{n::N, operation::sign, Node, Operator, Result, Span, Token, UnaryOp};
+use super::{n::N, Node, Operator, Result, Span, Token};
 
 fn is_digit_or_underscore(c: char) -> bool {
   c.is_digit(10) || c == '_'
+}
+
+#[tracable_parser]
+fn sign(i: Span) -> Result {
+  let (i, start) = position(i)?;
+  map(alt((char('-'), char('+'))), move |c: char| {
+    let op = if c == '-' { Operator::Minus } else { Operator::Plus };
+    Node::new(Token::Operator(op), &start)
+  })(i)
 }
 
 #[tracable_parser]
@@ -38,6 +49,7 @@ fn exponent(i: Span) -> Result<Span, i64> {
 #[tracable_parser]
 pub(super) fn number(i: Span) -> Result {
   let start = i;
+  let (i, maybe_sign) = opt(sign)(i)?;
 
   let (i, num) = map(
     terminated(
@@ -56,10 +68,13 @@ pub(super) fn number(i: Span) -> Result {
       }
 
       let n: N = buf.parse().map_err(|_| Err::Failure((dec, ErrorKind::Float)))?;
+      // FIXME: should be ternary
+      let n = if maybe_sign.is_some() { n.negate() } else { n };
 
       Ok(n)
     },
   )(i)?;
+
   let num = num?;
 
   let (i, maybe_exp) = opt(exponent)(i)?;
@@ -94,8 +109,6 @@ mod test {
 
   use nom_tracable::TracableInfo;
   use rstest::rstest;
-  use rust_decimal_macros::dec;
-  use serde_test::{assert_ser_tokens, Token as SerdeToken};
 
   #[rstest(input, expected,
         case("1.23", number!(1.23)),

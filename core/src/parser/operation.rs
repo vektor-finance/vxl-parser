@@ -14,15 +14,6 @@ use nom_locate::position;
 use nom_tracable::tracable_parser;
 
 #[tracable_parser]
-pub(super) fn sign(i: Span) -> Result {
-  let (i, start) = position(i)?;
-  map(alt((char('-'), char('+'))), move |c: char| {
-    let op = if c == '-' { Operator::Minus } else { Operator::Plus };
-    Node::new(Token::Operator(op), &start)
-  })(i)
-}
-
-#[tracable_parser]
 fn negation(i: Span) -> Result {
   let (i, start) = position(i)?;
   map(alt((tag("!"), terminated(tag_no_case("not"), space1))), move |_| {
@@ -32,7 +23,7 @@ fn negation(i: Span) -> Result {
 
 #[tracable_parser]
 fn unary_operator(i: Span) -> Result {
-  alt((sign, negation))(i)
+  negation(i)
 }
 
 #[tracable_parser]
@@ -193,10 +184,8 @@ mod test {
   #[rstest(input, expected,
         case("!foo", node!(unary_op!("!", ident!("foo")))),
         case("not foo", node!(unary_op!("!", ident!("foo")))),
-        case("-test", node!(unary_op!("-", ident!("test")))),
         case("!test_func(13)", node!(unary_op!("!", function!("test_func", none, number!(13))))),
         case("not test_func(13)", node!(unary_op!("!", function!("test_func", none, number!(13))))),
-        case("- 14", node!(unary_op!("-", number!(14)))),
         case("!true", node!(unary_op!("!", boolean!(true)))),
         case("not true", node!(unary_op!("!", boolean!(true)))),
         case("![1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false))))),

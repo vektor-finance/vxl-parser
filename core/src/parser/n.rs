@@ -55,6 +55,13 @@ impl N {
       None
     }
   }
+
+  pub fn negate(&self) -> Self {
+    match self {
+      N::Int(i) => N::Int(i * -1),
+      N::Decimal(d) => N::Decimal(d * Decimal::NEGATIVE_ONE),
+    }
+  }
 }
 
 impl FromStr for N {

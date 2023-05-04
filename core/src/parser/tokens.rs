@@ -397,15 +397,9 @@ macro_rules! function {
 
 #[macro_export]
 macro_rules! number {
-    (-$s:expr) => {
-        Token::UnaryOp(UnaryOp{
-            operator: node!(rc operator!("-")),
-            operand: node!(rc number!($s)),
-        })
-    };
-    ($s:expr) => {
-        Token::Number($s.into())
-    };
+  ($s:expr) => {
+    Token::Number($s.into())
+  };
 }
 
 #[macro_export]
