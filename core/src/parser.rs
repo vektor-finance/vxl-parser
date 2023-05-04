@@ -726,7 +726,7 @@ mod test {
             1foo_v1
           )
 
-          1 + 3
+          1 + 3%
 
           if(
             2 >= 1,
@@ -735,7 +735,7 @@ mod test {
           )"#,
           vec![
             node!(function!("fun", "sub", number!(1), boolean!(true), ident!("1foo_v1"))),
-            node!(binary_op!(number!(1), "+", number!(3))),
+            node!(binary_op!(number!(1), "+", percentage!(3))),
             node!(
               conditional!(
                 binary_op!(
