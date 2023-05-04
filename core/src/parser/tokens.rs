@@ -158,7 +158,7 @@ impl fmt::Display for Operator {
 
       // Postfix
       AttrAccess => ".",
-      IndexAccess => "[",
+      IndexAccess => "[]",
 
       // Other
       Concatenate => "++",
@@ -201,7 +201,7 @@ impl TryFrom<&str> for Operator {
 
       // Postfix
       "." => Ok(Operator::AttrAccess),
-      "[" => Ok(Operator::IndexAccess),
+      "[]" => Ok(Operator::IndexAccess),
 
       // Other
       "++" => Ok(Operator::Concatenate),

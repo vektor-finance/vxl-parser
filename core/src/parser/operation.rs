@@ -268,7 +268,7 @@ mod test {
                         ".",
                         ident!("foo")
                     ),
-                    "[",
+                    "[]",
                     number!(3)
                 ),
                 "+",
@@ -278,7 +278,7 @@ mod test {
                         ".",
                         ident!("bar")
                     ),
-                    "[",
+                    "[]",
                     string!("test")
                 )
             ))
