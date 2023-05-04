@@ -12,6 +12,7 @@ mod literal;
 mod n;
 mod node;
 mod number;
+mod numeric;
 mod operation;
 mod string;
 
@@ -25,6 +26,7 @@ use list::list;
 use literal::literal;
 use n::N;
 use number::number;
+use numeric::numeric;
 use operation::operation;
 use string::string;
 

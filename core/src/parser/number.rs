@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use nom::{
   bytes::complete::{tag_no_case, take_while1},
   character::complete::{alpha1, char},
@@ -40,7 +38,6 @@ fn exponent(i: Span) -> Result<Span, i64> {
 #[tracable_parser]
 pub(super) fn number(i: Span) -> Result {
   let start = i;
-  let (i, maybe_sign) = opt(sign)(i)?;
 
   let (i, num) = map(
     terminated(
@@ -87,31 +84,13 @@ pub(super) fn number(i: Span) -> Result {
   });
 
   let num = Node::new(Token::Number(num), &start);
-
-  if let Some(
-    op @ Node {
-      token: Token::Operator(Operator::Minus),
-      ..
-    },
-  ) = maybe_sign
-  {
-    let op = Rc::new(op);
-    let unary = UnaryOp {
-      operator: Rc::clone(&op),
-      operand: Rc::new(num),
-    };
-
-    Ok((i, Node::from_node(Token::UnaryOp(unary), &op)))
-  } else {
-    Ok((i, num))
-  }
+  Ok((i, num))
 }
 
 #[cfg(test)]
 mod test {
   use super::*;
   use crate::parser::test::{info, Result};
-  use std::convert::TryFrom;
 
   use nom_tracable::TracableInfo;
   use rstest::rstest;
@@ -126,15 +105,9 @@ mod test {
         case("1_0", number!(1_0)),
         case("1_000_000_00", number!(1_000_000_00)),
         case("1_000.0_100_001", number!(1_000.0_100_001)),
-        case("-38", number!(-38)),
-        case("-471.399", number!(-471.399)),
         case("1.7e8", number!(170000000)),
-        case("-17E10", number!(-170000000000)),
         case("8.6e-6", number!(0.0000086)),
         case("1e-4", number!(1e-4)),
-        case("-1e-4", number!(-1e-4)),
-        case("-1_000e-4", number!(-1_000e-4)),
-        case("-1e0_1", number!(-10)),
         case("0.333333333333333334", number!(0.333333333333333334))
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
