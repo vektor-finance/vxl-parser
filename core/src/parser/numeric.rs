@@ -101,6 +101,7 @@ pub(super) fn number(i: Span) -> Result {
   Ok((i, num))
 }
 
+// FIXME: merge with function above
 #[tracable_parser]
 pub(super) fn percentage(i: Span) -> Result {
   let start = i;
@@ -130,6 +131,27 @@ pub(super) fn percentage(i: Span) -> Result {
   )(i)?;
 
   let num = num?;
+
+  let (i, maybe_exp) = opt(exponent)(i)?;
+  let num = maybe_exp.map_or(num, |exp| match num {
+    N::Int(i) => {
+      let pow = 10i64.pow(exp.unsigned_abs() as u32);
+      if exp < 0 {
+        let v = Decimal::from_i64(i).unwrap() * (Decimal::ONE / Decimal::from_i64(pow).unwrap());
+        N::Decimal(v)
+      } else {
+        N::Int(i * pow)
+      }
+    }
+    N::Decimal(d) => {
+      let pow: Decimal = 10i64.pow(exp.unsigned_abs() as u32).into();
+      if exp < 0 {
+        N::Decimal(d * (Decimal::ONE / pow))
+      } else {
+        N::Int((d * pow).to_i64().unwrap())
+      }
+    }
+  });
 
   let num = Node::new(Token::Percentage(num), &start);
   Ok((i, num))
@@ -177,16 +199,23 @@ mod test {
   }
 
   #[rstest(input, expected,
-      case("1.23%", percentage!(1.23)),
-      case("47%", percentage!(47)),
-      case("17.3809%", percentage!(17.3809)),
-      case("17892037%", percentage!(17892037)),
-      case("1_0%", percentage!(1_0)),
-      case("1_000_000_00%", percentage!(1_000_000_00)),
-      case("1_000.0_100_001%", percentage!(1_000.0_100_001)),
-      case("-38%", percentage!(-38)),
-      case("-471.399%", percentage!(-471.399)),
-      case("0.3333333333333333%", percentage!(0.333333333333333334)),
+    case("1.23%", percentage!(1.23)),
+    case("47%", percentage!(47)),
+    case("17.3809%", percentage!(17.3809)),
+    case("17892037%", percentage!(17892037)),
+    case("1_0%", percentage!(1_0)),
+    case("1_000_000_00%", percentage!(1_000_000_00)),
+    case("1_000.0_100_001%", percentage!(1_000.0_100_001)),
+    case("-38%", percentage!(-38)),
+    case("-471.399%", percentage!(-471.399)),
+    case("1.7%e8", percentage!(170000000)),
+    case("-17%E10", percentage!(-170000000000)),
+    case("8.6%e-6", percentage!(0.0000086)),
+    case("1%e-4", percentage!(1e-4)),
+    case("-1%e-4", percentage!(-1e-4)),
+    case("-1_000%e-4", percentage!(-1_000e-4)),
+    case("-1%e0_1", percentage!(-10)),
+    case("0.3333333333333333%", percentage!(0.333333333333333334)),
     )]
   fn test_percentage(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
