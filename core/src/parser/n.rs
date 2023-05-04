@@ -87,3 +87,50 @@ impl Serialize for N {
     }
   }
 }
+
+#[cfg(test)]
+mod test {
+  use super::*;
+  use crate::parser::test::Result;
+
+  use rstest::rstest;
+  use rust_decimal_macros::dec;
+  use serde_test::{assert_ser_tokens, Token as SerdeToken};
+
+  #[rstest(input, expected,
+        case(N::Int(47), ("int", "47")),
+        case(N::Int(17892037), ("int", "17892037")),
+        case(N::Int(-38), ("int", "-38")),
+        case(N::Int(170000000), ("int", "170000000")),
+        case(N::Int(-170000000000), ("int", "-170000000000")),
+        case(N::Int(1_0), ("int", "10")),
+        case(N::Int(-1_0), ("int", "-10")),
+        case(N::Int(-1_700_000_000_00), ("int", "-170000000000")),
+        case(N::Decimal(dec!(1)), ("decimal", "1")),
+        case(N::Decimal(dec!(1.0)), ("decimal", "1.0")),
+        case(N::Decimal(dec!(1.00)), ("decimal", "1.00")),
+        case(N::Decimal(dec!(1.23)), ("decimal", "1.23")),
+        case(N::Decimal(dec!(17.3809)), ("decimal", "17.3809")),
+        case(N::Decimal(dec!(-471.399)), ("decimal", "-471.399")),
+        case(N::Decimal(dec!(0.000008599999999999999)), ("decimal", "0.000008599999999999999")),
+        case(N::Decimal(dec!(0.3333333333333333333333333333)), ("decimal", "0.3333333333333333333333333333")),
+        case(N::Decimal(dec!(-0.0000123)), ("decimal", "-0.0000123")),
+        case(N::Decimal(dec!(-0.0_000_123)), ("decimal", "-0.0000123")),
+        case(N::Decimal(dec!(-1_000_0.0_000_123)), ("decimal", "-10000.0000123")),
+  )]
+  fn test_serialize(input: N, expected: (&'static str, &'static str)) -> Result {
+    let (t, v) = expected;
+    assert_ser_tokens(
+      &input,
+      &[
+        SerdeToken::NewtypeVariant {
+          name: "number",
+          variant: t,
+        },
+        SerdeToken::Str(v),
+      ],
+    );
+
+    Ok(())
+  }
+}
