@@ -45,7 +45,6 @@ fn exponent(i: Span) -> Result<Span, i64> {
   }
 }
 
-// TODO: refactor to multiple parsers
 #[tracable_parser]
 pub(super) fn number(i: Span) -> Result {
   let start = i;
