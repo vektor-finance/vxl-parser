@@ -111,17 +111,23 @@ mod test {
   use rstest::rstest;
 
   #[rstest(input, expected,
-        case("1.23", number!(1.23)),
-        case("47", number!(47)),
-        case("17.3809", number!(17.3809)),
-        case("17892037", number!(17892037)),
-        case("1_0", number!(1_0)),
-        case("1_000_000_00", number!(1_000_000_00)),
-        case("1_000.0_100_001", number!(1_000.0_100_001)),
-        case("1.7e8", number!(170000000)),
-        case("8.6e-6", number!(0.0000086)),
-        case("1e-4", number!(1e-4)),
-        case("0.333333333333333334", number!(0.333333333333333334))
+      case("1.23", number!(1.23)),
+      case("47", number!(47)),
+      case("17.3809", number!(17.3809)),
+      case("17892037", number!(17892037)),
+      case("1_0", number!(1_0)),
+      case("1_000_000_00", number!(1_000_000_00)),
+      case("1_000.0_100_001", number!(1_000.0_100_001)),
+      case("-38", number!(-38)),
+      case("-471.399", number!(-471.399)),
+      case("1.7e8", number!(170000000)),
+      case("-17E10", number!(-170000000000)),
+      case("8.6e-6", number!(0.0000086)),
+      case("1e-4", number!(1e-4)),
+      case("-1e-4", number!(-1e-4)),
+      case("-1_000e-4", number!(-1_000e-4)),
+      case("-1e0_1", number!(-10)),
+      case("0.333333333333333334", number!(0.333333333333333334))
     )]
   fn test_number(input: &'static str, expected: Token, info: TracableInfo) -> Result {
     let span = Span::new_extra(input, info);
