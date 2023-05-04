@@ -435,12 +435,12 @@ mod test {
         case("FuN.sUB()", function!("fun", "sub")),
         case("fun(1foo_v1)", function!("fun", none, ident!("1foo_v1"))),
         case(
-          "fun(1, 2, false, none, 1dent)",
-          function!("fun", none, number!(1), number!(2), boolean!(false), ident!("none"), ident!("1dent"))
+          "fun(1, 2%, false, none, 1dent)",
+          function!("fun", none, number!(1), percentage!(2), boolean!(false), ident!("none"), ident!("1dent"))
         ),
         case("fun.sub(1, 2, 3)", function!("fun", "sub", number!(1), number!(2), number!(3))),
         case("fun.sub( 1 , 2 , 3 )", function!("fun", "sub", number!(1), number!(2), number!(3))),
-        case("_fun.sub(1, 2, 3)", function!("_fun", "sub", number!(1), number!(2), number!(3))),
+        case("_fun.sub(1, 2%, 3)", function!("_fun", "sub", number!(1), percentage!(2), number!(3))),
         case("foo(false)", function!("foo", none, boolean!(false))),
         case("foo(!false)", function!("foo", none, unary_op!("!", boolean!(false)))),
         case("fun(1, foo=123)", function!("fun", none, number!(1), opt!("foo", number!(123)))),
@@ -635,8 +635,8 @@ mod test {
             vec![node!(number!(0.0001))]
         ),
         case(
-            "[1, 2, 3] ++ [1, 2, 3]",
-             vec![node!(binary_op!(list!(number!(1), number!(2), number!(3)), "++", list!(number!(1), number!(2), number!(3))))]
+            "[1, 2.0, 3%] ++ [1, 2.0, 3%]",
+             vec![node!(binary_op!(list!(number!(1), number!(2.0), percentage!(3)), "++", list!(number!(1), number!(2.0), percentage!(3))))]
         ),
         case(
             "fun()",
