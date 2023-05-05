@@ -1,17 +1,18 @@
-use super::{expr_term, BinaryOp, Conditional, Node, Operator, Result, Span, Token, UnaryOp, numeric};
 use std::rc::Rc;
 
 use nom::{
   branch::alt,
   bytes::complete::{is_a, tag, tag_no_case},
-  character::complete::{anychar, char, space0, space1},
-  combinator::{map, recognize, not},
+  character::complete::{anychar, char, digit1, space0, space1},
+  combinator::{map, not, recognize},
   error::ErrorKind,
   sequence::{terminated, tuple},
   Err,
 };
 use nom_locate::position;
 use nom_tracable::tracable_parser;
+
+use super::{expr_term, BinaryOp, Conditional, Node, Operator, Result, Span, Token, UnaryOp};
 
 #[tracable_parser]
 pub fn sign(i: Span) -> Result {
@@ -32,7 +33,7 @@ fn negation(i: Span) -> Result {
 
 #[tracable_parser]
 fn unary_operator(i: Span) -> Result {
-  alt((terminated(sign, not(numeric)), negation))(i)
+  alt((negation, terminated(sign, not(digit1))))(i)
 }
 
 #[tracable_parser]

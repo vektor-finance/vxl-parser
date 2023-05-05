@@ -12,7 +12,7 @@ use nom_tracable::tracable_parser;
 use rust_decimal::prelude::*;
 use serde::{Serialize, Serializer};
 
-use super::{Node, Operator, Result, Span, Token, TokenError, operation::sign};
+use super::{operation::sign, Node, Operator, Result, Span, Token, TokenError};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum N {
