@@ -11,7 +11,7 @@ mod list;
 mod literal;
 mod n;
 mod node;
-mod number;
+mod numeric;
 mod operation;
 mod string;
 
@@ -24,7 +24,7 @@ use identifier::identifier;
 use list::list;
 use literal::literal;
 use n::N;
-use number::number;
+use numeric::numeric;
 use operation::operation;
 use string::string;
 
@@ -435,14 +435,15 @@ mod test {
         case("FuN.sUB()", function!("fun", "sub")),
         case("fun(1foo_v1)", function!("fun", none, ident!("1foo_v1"))),
         case(
-          "fun(1, 2, false, none, 1dent)",
-          function!("fun", none, number!(1), number!(2), boolean!(false), ident!("none"), ident!("1dent"))
+          "fun(1, 2%, false, none, 1dent)",
+          function!("fun", none, number!(1), percentage!(2), boolean!(false), ident!("none"), ident!("1dent"))
         ),
         case("fun.sub(1, 2, 3)", function!("fun", "sub", number!(1), number!(2), number!(3))),
         case("fun.sub( 1 , 2 , 3 )", function!("fun", "sub", number!(1), number!(2), number!(3))),
-        case("_fun.sub(1, 2, 3)", function!("_fun", "sub", number!(1), number!(2), number!(3))),
+        case("_fun.sub(1, 2%, 3)", function!("_fun", "sub", number!(1), percentage!(2), number!(3))),
         case("foo(false)", function!("foo", none, boolean!(false))),
         case("foo(!false)", function!("foo", none, unary_op!("!", boolean!(false)))),
+        case("foo(-bar)", function!("foo", none, unary_op!("-", ident!("bar")))),
         case("fun(1, foo=123)", function!("fun", none, number!(1), opt!("foo", number!(123)))),
         case("fun.sub(1.0, foo=fun2.sub(\"thing\", foo2=fun3(false)))",
           function!(
@@ -466,7 +467,7 @@ mod test {
                   )
               )
           )),
-        case("fun.sub(123, foo=321, bar=false, baz=\"a test string\", faz=test)",
+        case("fun.sub(123, foo=321, bar=false, baz=\"a test string\", faz=test, foz=-1_000.12%)",
           function!(
             "fun",
             "sub",
@@ -474,7 +475,8 @@ mod test {
             opt!("foo", number!(321)),
             opt!("bar", boolean!(false)),
             opt!("baz", string!("a test string")),
-            opt!("faz", ident!("test"))
+            opt!("faz", ident!("test")),
+            opt!("foz", percentage!(-1_000.12))
           )
         ),
         case("fun.sub(123, 0xcac725bef4f114f728cbcfd744a731c2a463c3fc, 0x)",
@@ -635,8 +637,8 @@ mod test {
             vec![node!(number!(0.0001))]
         ),
         case(
-            "[1, 2, 3] ++ [1, 2, 3]",
-             vec![node!(binary_op!(list!(number!(1), number!(2), number!(3)), "++", list!(number!(1), number!(2), number!(3))))]
+            "[1, 2.0, 3%] ++ [1, 2.0, 3%]",
+             vec![node!(binary_op!(list!(number!(1), number!(2.0), percentage!(3)), "++", list!(number!(1), number!(2.0), percentage!(3))))]
         ),
         case(
             "fun()",
@@ -726,7 +728,7 @@ mod test {
             1foo_v1
           )
 
-          1 + 3
+          1 + 3%
 
           if(
             2 >= 1,
@@ -735,7 +737,7 @@ mod test {
           )"#,
           vec![
             node!(function!("fun", "sub", number!(1), boolean!(true), ident!("1foo_v1"))),
-            node!(binary_op!(number!(1), "+", number!(3))),
+            node!(binary_op!(number!(1), "+", percentage!(3))),
             node!(
               conditional!(
                 binary_op!(

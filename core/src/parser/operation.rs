@@ -1,11 +1,10 @@
-use super::{expr_term, BinaryOp, Conditional, Node, Operator, Result, Span, Token, UnaryOp};
 use std::rc::Rc;
 
 use nom::{
   branch::alt,
   bytes::complete::{is_a, tag, tag_no_case},
-  character::complete::{anychar, char, space0, space1},
-  combinator::{map, recognize},
+  character::complete::{anychar, char, digit1, space0, space1},
+  combinator::{map, not, recognize},
   error::ErrorKind,
   sequence::{terminated, tuple},
   Err,
@@ -13,8 +12,10 @@ use nom::{
 use nom_locate::position;
 use nom_tracable::tracable_parser;
 
+use super::{expr_term, BinaryOp, Conditional, Node, Operator, Result, Span, Token, UnaryOp};
+
 #[tracable_parser]
-pub(super) fn sign(i: Span) -> Result {
+pub fn sign(i: Span) -> Result {
   let (i, start) = position(i)?;
   map(alt((char('-'), char('+'))), move |c: char| {
     let op = if c == '-' { Operator::Minus } else { Operator::Plus };
@@ -32,7 +33,7 @@ fn negation(i: Span) -> Result {
 
 #[tracable_parser]
 fn unary_operator(i: Span) -> Result {
-  alt((sign, negation))(i)
+  alt((negation, terminated(sign, not(digit1))))(i)
 }
 
 #[tracable_parser]
@@ -191,12 +192,11 @@ mod test {
   use rstest::rstest;
 
   #[rstest(input, expected,
+        case("-foo", node!(unary_op!("-", ident!("foo")))),
         case("!foo", node!(unary_op!("!", ident!("foo")))),
         case("not foo", node!(unary_op!("!", ident!("foo")))),
-        case("-test", node!(unary_op!("-", ident!("test")))),
         case("!test_func(13)", node!(unary_op!("!", function!("test_func", none, number!(13))))),
         case("not test_func(13)", node!(unary_op!("!", function!("test_func", none, number!(13))))),
-        case("- 14", node!(unary_op!("-", number!(14)))),
         case("!true", node!(unary_op!("!", boolean!(true)))),
         case("not true", node!(unary_op!("!", boolean!(true)))),
         case("![1, true, false]", node!(unary_op!("!", list!(number!(1), boolean!(true), boolean!(false))))),

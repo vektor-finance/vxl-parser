@@ -230,6 +230,7 @@ pub enum Token {
   // Basic literal types
   Boolean(bool),
   Number(N),
+  Percentage(N),
   String(String),
   None,
 
@@ -299,6 +300,7 @@ impl Token {
   gen_as!(false, Token::Boolean(false));
   gen_as!(string, Token::String(s), &str, s);
   gen_as!(number, Token::Number(n), &N, n);
+  gen_as!(percentage, Token::Percentage(p), &N, p);
   gen_as!(address, Token::Address(a), &str, a);
   gen_as!(none, Token::None);
 
@@ -397,15 +399,16 @@ macro_rules! function {
 
 #[macro_export]
 macro_rules! number {
-    (-$s:expr) => {
-        Token::UnaryOp(UnaryOp{
-            operator: node!(rc operator!("-")),
-            operand: node!(rc number!($s)),
-        })
-    };
-    ($s:expr) => {
-        Token::Number($s.into())
-    };
+  ($s:expr) => {
+    Token::Number($s.into())
+  };
+}
+
+#[macro_export]
+macro_rules! percentage {
+  ($s:expr) => {
+    Token::Percentage($s.into())
+  };
 }
 
 #[macro_export]
