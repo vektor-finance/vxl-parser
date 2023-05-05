@@ -62,6 +62,59 @@ fn exponent(i: Span) -> Result<Span, i64> {
 }
 
 #[tracable_parser]
+pub(super) fn n(i: Span) -> Result<Span, N> {
+  let (i, maybe_sign) = opt(sign)(i)?;
+
+  let (i, num) = map(
+    terminated(
+      tuple((
+        take_while1(is_digit_or_underscore),
+        opt(preceded(char('.'), take_while1(is_digit_or_underscore))),
+      )),
+      // allows identifiers starting with numbers
+      not(preceded(opt(tag_no_case("e")), alpha1)),
+    ),
+    |(dec, maybe_fract): (Span, Option<Span>)| {
+      let mut buf = dec.fragment().replace("_", "");
+      if let Some(fract) = maybe_fract {
+        buf.push('.');
+        buf.push_str(&fract.fragment().replace("_", ""));
+      }
+
+      let n: N = buf.parse().map_err(|_| Err::Failure((dec, ErrorKind::Float)))?;
+      let n = if maybe_sign.is_some() { n.negate() } else { n };
+
+      Ok(n)
+    },
+  )(i)?;
+
+  let num = num?;
+
+  let (i, maybe_exp) = opt(exponent)(i)?;
+  let num = maybe_exp.map_or(num, |exp| match num {
+    N::Int(i) => {
+      let pow = 10i64.pow(exp.unsigned_abs() as u32);
+      if exp < 0 {
+        let v = Decimal::from_i64(i).unwrap() * (Decimal::ONE / Decimal::from_i64(pow).unwrap());
+        N::Decimal(v)
+      } else {
+        N::Int(i * pow)
+      }
+    }
+    N::Decimal(d) => {
+      let pow: Decimal = 10i64.pow(exp.unsigned_abs() as u32).into();
+      if exp < 0 {
+        N::Decimal(d * (Decimal::ONE / pow))
+      } else {
+        N::Int((d * pow).to_i64().unwrap())
+      }
+    }
+  });
+
+  Ok((i, num))
+}
+
+#[tracable_parser]
 pub(super) fn number(i: Span) -> Result {
   let start = i;
   let (i, maybe_sign) = opt(sign)(i)?;
