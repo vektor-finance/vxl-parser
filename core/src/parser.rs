@@ -443,6 +443,7 @@ mod test {
         case("_fun.sub(1, 2%, 3)", function!("_fun", "sub", number!(1), percentage!(2), number!(3))),
         case("foo(false)", function!("foo", none, boolean!(false))),
         case("foo(!false)", function!("foo", none, unary_op!("!", boolean!(false)))),
+        case("foo(-bar)", function!("foo", none, unary_op!("-", ident!("bar")))),
         case("fun(1, foo=123)", function!("fun", none, number!(1), opt!("foo", number!(123)))),
         case("fun.sub(1.0, foo=fun2.sub(\"thing\", foo2=fun3(false)))",
           function!(

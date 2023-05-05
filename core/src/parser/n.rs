@@ -1,7 +1,6 @@
 use std::str::FromStr;
 
 use nom::{
-  branch::alt,
   bytes::complete::{tag_no_case, take_while1},
   character::complete::{alpha1, char},
   combinator::{map, not, opt},
@@ -9,12 +8,11 @@ use nom::{
   sequence::{pair, preceded, terminated, tuple},
   Err,
 };
-use nom_locate::position;
 use nom_tracable::tracable_parser;
 use rust_decimal::prelude::*;
 use serde::{Serialize, Serializer};
 
-use super::{Node, Operator, Result, Span, Token, TokenError};
+use super::{Node, Operator, Result, Span, Token, TokenError, operation::sign};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum N {
@@ -108,15 +106,6 @@ impl Serialize for N {
 
 fn is_digit_or_underscore(c: char) -> bool {
   c.is_digit(10) || c == '_'
-}
-
-#[tracable_parser]
-fn sign(i: Span) -> Result {
-  let (i, start) = position(i)?;
-  map(alt((char('-'), char('+'))), move |c: char| {
-    let op = if c == '-' { Operator::Minus } else { Operator::Plus };
-    Node::new(Token::Operator(op), &start)
-  })(i)
 }
 
 #[tracable_parser]
