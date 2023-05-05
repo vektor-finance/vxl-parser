@@ -13,8 +13,18 @@ use rust_decimal::prelude::*;
 
 use super::{n::N, Node, Operator, Result, Span, Token};
 
+#[warn(dead_code)]
+fn is_exponent_char(c: char) -> bool {
+  c.to_ascii_lowercase() == 'e'
+}
+
 fn is_digit_or_underscore(c: char) -> bool {
   c.is_digit(10) || c == '_'
+}
+
+#[warn(dead_code)]
+fn is_valid_numeric(c: char) -> bool {
+  is_digit_or_underscore(c) || is_exponent_char(c) || c == '.' || c == '%'
 }
 
 #[tracable_parser]
@@ -24,6 +34,12 @@ fn sign(i: Span) -> Result {
     let op = if c == '-' { Operator::Minus } else { Operator::Plus };
     Node::new(Token::Operator(op), &start)
   })(i)
+}
+
+#[warn(dead_code)]
+#[tracable_parser]
+fn negative(i: Span) -> Result<Span, Span> {
+  preceded(char('-'), take_while1(is_valid_numeric))(i)
 }
 
 #[tracable_parser]
@@ -67,7 +83,6 @@ pub(super) fn number(i: Span) -> Result {
       }
 
       let n: N = buf.parse().map_err(|_| Err::Failure((dec, ErrorKind::Float)))?;
-      // FIXME: should be ternary
       let n = if maybe_sign.is_some() { n.negate() } else { n };
 
       Ok(n)
