@@ -123,7 +123,7 @@ fn sign(i: Span) -> Result {
 fn exponent(i: Span) -> Result<Span, i64> {
   let (i, (maybe_sign, num)) = preceded(tag_no_case("e"), pair(opt(sign), take_while1(is_digit_or_underscore)))(i)?;
 
-  let n: i64 = (*num.fragment().replace("_", ""))
+  let n: i64 = (*num.fragment().replace('_', ""))
     .parse()
     .map_err(|_| Err::Failure((i, ErrorKind::Digit)))?;
 
@@ -152,10 +152,10 @@ pub(super) fn n(i: Span) -> Result<Span, N> {
       not(preceded(opt(tag_no_case("e")), alpha1)),
     ),
     |(dec, maybe_fract): (Span, Option<Span>)| {
-      let mut buf = dec.fragment().replace("_", "");
+      let mut buf = dec.fragment().replace('_', "");
       if let Some(fract) = maybe_fract {
         buf.push('.');
-        buf.push_str(&fract.fragment().replace("_", ""));
+        buf.push_str(&fract.fragment().replace('_', ""));
       }
 
       let n: N = buf.parse().map_err(|_| Err::Failure((dec, ErrorKind::Float)))?;
