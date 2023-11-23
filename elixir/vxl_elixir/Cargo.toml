@@ -1,6 +1,6 @@
 [package]
 name = "vxl_elixir"
-version = "0.0.27"
+version = "0.0.28"
 authors = ["Vektor Engineering <engineering@vektor.finance>"]
 edition = "2018"
 homepage = "https://vektor.finance"
