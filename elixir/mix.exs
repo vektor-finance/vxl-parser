@@ -11,7 +11,6 @@ defmodule VXLParser.MixProject do
       elixir: "~> 1.15",
       deps: deps(),
       package: package(),
-      rustler_crates: rustler_crates(),
       test_coverage: [tool: ExCoveralls]
     ]
   end
@@ -31,16 +30,4 @@ defmodule VXLParser.MixProject do
       links: %{Github: "https://github.com/vektor-finance/vxl-parser"},
       files: ["lib", "native", "mix.exs", "README.md"]
     ]
-
-  defp rustler_crates do
-    [
-      vxl_elixir: [
-        path: "vxl_elixir",
-        mode: rustc_mode(Mix.env())
-      ]
-    ]
-  end
-
-  defp rustc_mode(:prod), do: :release
-  defp rustc_mode(_), do: :debug
 end

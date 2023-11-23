@@ -1,5 +1,5 @@
 defmodule VXLParser do
-  use Rustler, otp_app: :vxl_parser, crate: :vxl_elixir
+  use Rustler, otp_app: :vxl_parser, crate: :vxl_elixir, path: "vxl_elixir"
 
   alias BuildInfo
 
