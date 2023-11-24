@@ -30,7 +30,7 @@ defmodule VXLParser.MixProject do
       name: "vxl_parser",
       maintainers: ["Vektor <engineering@vektor.finance>"],
       links: %{Github: "https://github.com/vektor-finance/vxl-parser"},
-      files: ["lib", "native", "mix.exs", "checksum-*.exs", "README.md"],
+      files: ["lib", "vxl_parser", "mix.exs", "checksum-*.exs", "README.md"],
       links: %{"GitHub" => @source_url}
     ]
 end
