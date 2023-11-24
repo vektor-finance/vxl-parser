@@ -2,6 +2,7 @@ defmodule VXLParser.MixProject do
   use Mix.Project
 
   @version "0.0.28"
+  @source_url "https://github.com/vektor-finance/vxl-parser"
 
   def project do
     [
@@ -18,6 +19,7 @@ defmodule VXLParser.MixProject do
   defp deps,
     do: [
       {:jason, "~> 1.0"},
+      {:rustler_precompiled, "~> 0.4"},
       {:rustler, "~> 0.30"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:excoveralls, "~> 0.18", only: [:test], runtime: false}
@@ -28,6 +30,7 @@ defmodule VXLParser.MixProject do
       name: "vxl_parser",
       maintainers: ["Vektor <engineering@vektor.finance>"],
       links: %{Github: "https://github.com/vektor-finance/vxl-parser"},
-      files: ["lib", "native", "mix.exs", "README.md"]
+      files: ["lib", "vxl_parser", "mix.exs", "checksum-*.exs", "README.md"],
+      links: %{"GitHub" => @source_url}
     ]
 end
