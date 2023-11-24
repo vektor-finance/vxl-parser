@@ -44,7 +44,7 @@ jobs:
         toolchain: stable
         target: ${{ matrix.job.target }}
 
-    - name: Build the project
+    - name: Build project
       id: build-crate
       uses: philss/rustler-precompiled-action@v1.0.1
       with:
