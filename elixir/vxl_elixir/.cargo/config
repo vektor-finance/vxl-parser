@@ -24,6 +24,3 @@ rustflags = [
 
 [profile.release]
 lto = true
-
-[build]
-target-dir = "target"
