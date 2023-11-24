@@ -77,6 +77,8 @@ jobs:
 
       - name: Compile
         run: mix compile
+        env:
+          RUSTLER_PRECOMPILATION_FORCE_BUILD: "true"
 
       - name: Check formatting
         run: mix format --check-formatted

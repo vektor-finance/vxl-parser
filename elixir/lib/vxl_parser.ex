@@ -6,7 +6,7 @@ defmodule VXLParser do
     crate: :vxl_elixir,
     path: "vxl_elixir",
     base_url: "https://github.com/vektor-finance/vxl-parser/releases/download/v#{version}",
-    force_build: System.get_env("RUSTLER_PRECOMPILATION_EXAMPLE_BUILD") in ["1", "true"],
+    force_build: System.get_env("RUSTLER_PRECOMPILATION_FORCE_BUILD") in ["1", "true"],
     targets: Enum.uniq(["aarch64-unknown-linux-musl" | RustlerPrecompiled.Config.default_targets()]),
     version: version
 
