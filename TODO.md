@@ -2,6 +2,7 @@
 
 ## Parser
 
+- [ ] Fix all the create import setup
 - [ ] Improve error responses to JS/Elixir
 - [ ] Serialization/Deserialization tests
 - [ ] More web/node tests
@@ -11,7 +12,6 @@
 
 ## Elixir
 
-- [ ] Replace `serde_json` with proper conversion of types
 - [ ] Fix error handling - return :ok, :error atoms
 
 ## JS
