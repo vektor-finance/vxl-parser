@@ -18,6 +18,10 @@
 
 - [ ] Fix error handling
 
+## CI
+
+- [ ] Add CI for JS/wasm-pack release
+
 HCL Example:
 
 - [Spec](https://github.com/hashicorp/hcl/blob/hcl2/hclsyntax/spec.md)
