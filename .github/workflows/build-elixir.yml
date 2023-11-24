@@ -24,7 +24,7 @@ jobs:
         elixir:
           - "1.15"
         otp:
-          - "25"
+          - "26"
         rust:
           - stable
 
