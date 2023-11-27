@@ -100,10 +100,6 @@ wasm-pack test --node js
 cargo bench
 ```
 
-## TODO
-
-See [TODO](TODO.md)
-
 ## Known issues
 
 ### vxl-parser WASM module packing process
