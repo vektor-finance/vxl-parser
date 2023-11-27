@@ -3,8 +3,36 @@ use std::{error::Error, rc::Rc};
 pub mod tracer;
 use tracer::get_tracer;
 
-pub mod parser;
-use parser::*;
+#[macro_use]
+mod address;
+mod boolean;
+mod collection;
+mod comment;
+mod identifier;
+mod list;
+mod literal;
+mod n;
+mod node;
+mod numeric;
+mod operation;
+mod result;
+mod string;
+mod tokens;
+
+pub use address::*;
+pub use boolean::*;
+pub use collection::*;
+pub use comment::*;
+pub use identifier::*;
+pub use list::*;
+pub use literal::*;
+pub use n::*;
+pub use node::*;
+pub use numeric::*;
+pub use operation::*;
+pub use result::*;
+pub use string::*;
+pub use tokens::*;
 
 use nom::{
   branch::alt,
