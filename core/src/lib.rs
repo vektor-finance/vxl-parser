@@ -37,10 +37,10 @@ pub use tokens::*;
 use nom::{
   branch::alt,
   bytes::complete::{tag, tag_no_case, take},
-  character::complete::{char, line_ending, multispace0, newline, space0, space1},
+  character::complete::{char, line_ending, multispace0, newline, space0},
   combinator::{all_consuming, complete, eof, map, opt, recognize},
   error::ErrorKind,
-  multi::{fold_many0, fold_many1, many0, many1, separated_list0},
+  multi::{fold_many0, fold_many1, many0, many1},
   sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
   Err,
 };
@@ -155,7 +155,6 @@ fn expr_term(i: Span) -> Result {
   let (rest, term) = alt((
     address,
     literal,
-    for_loop,
     collection,
     if_statement,
     function,
@@ -209,77 +208,6 @@ fn if_statement(i: Span) -> Result {
       Node::from_node(Token::Conditional(c), &cond)
     },
   )(i)
-}
-
-#[tracable_parser]
-fn for_intro(i: Span) -> Result<Span, (Vec<Node>, Node)> {
-  let kw_for = recognize(tuple((space0, tag_no_case("for"), space1)));
-  let kw_in = recognize(tuple((space1, tag_no_case("in"), space1)));
-  let colon = recognize(tuple((space1, char(':'), space1)));
-
-  map(
-    tuple((
-      kw_for,
-      separated_list0(tuple((char(','), space0)), expression),
-      kw_in,
-      expression,
-      colon,
-    )),
-    |(_, binds, _, expr, _)| (binds, expr),
-  )(i)
-}
-
-#[tracable_parser]
-fn for_cond(i: Span) -> Result {
-  let kw_in = recognize(tuple((space1, tag_no_case("if"), space1)));
-  preceded(kw_in, expression)(i)
-}
-
-#[tracable_parser]
-fn tuple_for_loop(i: Span) -> Result {
-  let (_, span): (_, Span) = position(i)?;
-  map(
-    delimited(char('['), tuple((for_intro, expression, opt(for_cond))), char(']')),
-    move |((binds, expr), body, cond)| {
-      let for_loop = ForLoop::Tuple {
-        binds,
-        expr: Rc::new(expr),
-        body: Rc::new(body),
-        cond: cond.map(Rc::new),
-      };
-
-      Node::new(Token::ForLoop(for_loop), &span)
-    },
-  )(i)
-}
-
-#[tracable_parser]
-fn object_for_loop(i: Span) -> Result {
-  let (_, span): (_, Span) = position(i)?;
-  let arrow = recognize(tuple((space0, tag("=>"), space0)));
-  map(
-    delimited(
-      char('{'),
-      tuple((for_intro, expression, arrow, expression, opt(tag("...")), opt(for_cond))),
-      char('}'),
-    ),
-    move |((binds, expr), key, _, val, elipsis, cond)| {
-      let for_loop = ForLoop::Object {
-        binds,
-        expr: Rc::new(expr),
-        body: Rc::new((key, val)),
-        grouping: elipsis.is_some(),
-        cond: cond.map(Rc::new),
-      };
-
-      Node::new(Token::ForLoop(for_loop), &span)
-    },
-  )(i)
-}
-
-#[tracable_parser]
-fn for_loop(i: Span) -> Result {
-  alt((tuple_for_loop, object_for_loop))(i)
 }
 
 #[tracable_parser]
