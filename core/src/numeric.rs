@@ -22,7 +22,6 @@ pub fn numeric(i: Span) -> Result {
 mod test {
   use crate::test::{info, Result};
   use crate::*;
-
   use nom_tracable::TracableInfo;
   use rstest::rstest;
 

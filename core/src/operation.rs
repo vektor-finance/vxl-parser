@@ -181,11 +181,8 @@ pub fn operation(i: Span) -> Result {
 
 #[cfg(test)]
 mod test {
+  use crate::test::{info, Result};
   use crate::*;
-  use crate::{
-    test::{info, Result},
-    Function,
-  };
   use std::convert::TryFrom;
 
   use nom_tracable::TracableInfo;
