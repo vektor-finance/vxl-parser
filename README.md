@@ -16,7 +16,7 @@
 
 ## Background
 
-This library start off as a fork of [https://github.com/jlindsey/hcl2](https://github.com/jlindsey/hcl2).
+This library started off as a fork of [https://github.com/jlindsey/hcl2](https://github.com/jlindsey/hcl2).
 
 Vektor Execution Language (VXL) is a chain-agnostic highly flexible grammar to interact with smart contracts and blockchains.
 
