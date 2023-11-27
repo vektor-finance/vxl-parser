@@ -12,7 +12,7 @@ use nom::{
 use nom_locate::position;
 use nom_tracable::tracable_parser;
 
-use super::{expr_term, BinaryOp, Conditional, Node, Operator, Result, Span, Token, UnaryOp};
+use crate::{expr_term, BinaryOp, Conditional, Node, Operator, Result, Span, Token, UnaryOp};
 
 #[tracable_parser]
 pub fn sign(i: Span) -> Result {
@@ -117,7 +117,7 @@ fn membership_operator(i: Span) -> Result {
 }
 
 #[tracable_parser]
-pub(super) fn binary_operator(i: Span) -> Result {
+pub fn binary_operator(i: Span) -> Result {
   alt((
     other_operator,
     membership_operator,
@@ -127,7 +127,7 @@ pub(super) fn binary_operator(i: Span) -> Result {
   ))(i)
 }
 
-pub(super) fn unary_operation(i: Span) -> Result {
+pub fn unary_operation(i: Span) -> Result {
   map(tuple((unary_operator, space0, expr_term)), move |(op, _, expr)| {
     let op = Rc::new(op);
     let unop = UnaryOp {
@@ -140,7 +140,7 @@ pub(super) fn unary_operation(i: Span) -> Result {
 }
 
 #[tracable_parser]
-pub(super) fn binary_operation(i: Span) -> Result {
+pub fn binary_operation(i: Span) -> Result {
   map(
     tuple((expr_term, space0, binary_operator, space0, expr_term)),
     move |(left, _, op, _, right)| {
@@ -157,7 +157,7 @@ pub(super) fn binary_operation(i: Span) -> Result {
 }
 
 #[tracable_parser]
-fn ternary_operator(i: Span) -> Result {
+pub fn ternary_operator(i: Span) -> Result {
   let qm = recognize(tuple((space0, char('?'), space0)));
   let colon = recognize(tuple((space0, char(':'), space0)));
   map(
@@ -175,14 +175,14 @@ fn ternary_operator(i: Span) -> Result {
 }
 
 #[tracable_parser]
-pub(super) fn operation(i: Span) -> Result {
+pub fn operation(i: Span) -> Result {
   alt((unary_operation, binary_operation, ternary_operator))(i)
 }
 
 #[cfg(test)]
 mod test {
-  use super::*;
-  use crate::parser::{
+  use crate::*;
+  use crate::{
     test::{info, Result},
     Function,
   };

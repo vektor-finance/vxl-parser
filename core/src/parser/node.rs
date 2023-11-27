@@ -1,7 +1,7 @@
 use serde::Serialize;
 use std::fmt::Debug;
 
-use super::{Span, Token};
+use crate::{Span, Token};
 
 pub type Tree = Vec<Node>;
 
@@ -47,13 +47,13 @@ impl Node {
 
 #[cfg(test)]
 mod test {
-  use super::*;
-  use crate::parser::N;
+  use crate::*;
+  use crate::N;
   use rust_decimal::Decimal;
   use std::rc::Rc;
 
   impl Node {
-    pub(in crate::parser) fn assert_same_token_if_some(&self, other: &Option<Rc<Node>>) {
+    pub fn assert_same_token_if_some(&self, other: &Option<Rc<Node>>) {
       if let Some(other) = other {
         self.assert_same_token(&other)
       } else {
@@ -61,7 +61,7 @@ mod test {
       }
     }
 
-    pub(in crate::parser) fn assert_same_token(&self, other: &Node) {
+    pub fn assert_same_token(&self, other: &Node) {
       match &self.token {
         Token::Function(func) => {
           if let Some(other_func) = other.token.as_function() {

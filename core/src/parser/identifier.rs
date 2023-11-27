@@ -1,4 +1,4 @@
-use super::{Node, Result, Span, Token};
+use crate::{Node, Result, Span, Token};
 
 use nom::{bytes::complete::take_while1, combinator::map};
 
@@ -9,7 +9,7 @@ fn valid_ident_char_a(c: char) -> bool {
 }
 
 #[tracable_parser]
-pub(super) fn identifier(i: Span) -> Result {
+pub fn identifier(i: Span) -> Result {
   map(take_while1(valid_ident_char_a), |span: Span| {
     let s = String::from(*span.fragment());
 
@@ -19,14 +19,14 @@ pub(super) fn identifier(i: Span) -> Result {
 
 #[cfg(test)]
 mod test {
-  use super::*;
+  use crate::*;
   use nom_tracable::TracableInfo;
   use rstest::{fixture, rstest};
 
-  pub(super) type Result = std::result::Result<(), Box<dyn std::error::Error>>;
+  pub type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
   #[fixture]
-  pub(super) fn info() -> TracableInfo {
+  pub fn info() -> TracableInfo {
     TracableInfo::default()
   }
 

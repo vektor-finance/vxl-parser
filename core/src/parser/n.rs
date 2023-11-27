@@ -12,7 +12,7 @@ use nom_tracable::tracable_parser;
 use rust_decimal::prelude::*;
 use serde::{Serialize, Serializer};
 
-use super::{operation::sign, Node, Operator, Result, Span, Token, TokenError};
+use crate::{sign, Node, Operator, Result, Span, Token, TokenError};
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum N {
@@ -109,7 +109,7 @@ fn is_digit_or_underscore(c: char) -> bool {
 }
 
 #[tracable_parser]
-fn exponent(i: Span) -> Result<Span, i64> {
+pub fn exponent(i: Span) -> Result<Span, i64> {
   let (i, (maybe_sign, num)) = preceded(tag_no_case("e"), pair(opt(sign), take_while1(is_digit_or_underscore)))(i)?;
 
   let n: i64 = (*num.fragment().replace('_', ""))
@@ -128,7 +128,7 @@ fn exponent(i: Span) -> Result<Span, i64> {
 }
 
 #[tracable_parser]
-pub(super) fn n(i: Span) -> Result<Span, N> {
+pub fn n(i: Span) -> Result<Span, N> {
   let (i, maybe_sign) = opt(sign)(i)?;
 
   let (i, num) = map(
@@ -182,8 +182,8 @@ pub(super) fn n(i: Span) -> Result<Span, N> {
 
 #[cfg(test)]
 mod test {
-  use super::*;
-  use crate::parser::test::{info, Result};
+  use crate::*;
+  use crate::test::{info, Result};
 
   use nom_tracable::TracableInfo;
   use rstest::rstest;

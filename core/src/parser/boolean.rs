@@ -7,7 +7,7 @@ use nom::{
 };
 use nom_tracable::tracable_parser;
 
-use super::{Node, Result, Span, Token};
+use crate::{Node, Result, Span, Token};
 
 #[tracable_parser]
 fn true_literal(i: Span) -> Result {
@@ -22,7 +22,7 @@ fn false_literal(i: Span) -> Result {
 }
 
 #[tracable_parser]
-pub(super) fn boolean(i: Span) -> Result {
+pub fn boolean(i: Span) -> Result {
   let (_, head): (_, char) = peek(anychar)(i)?;
   match head {
     't' | 'T' => true_literal(i),
@@ -33,8 +33,8 @@ pub(super) fn boolean(i: Span) -> Result {
 
 #[cfg(test)]
 mod test {
-  use super::*;
-  use crate::parser::test::{info, Result};
+  use crate::*;
+  use crate::test::{info, Result};
   use nom_tracable::TracableInfo;
 
   use rstest::rstest;

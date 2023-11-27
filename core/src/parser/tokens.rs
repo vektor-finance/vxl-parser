@@ -1,6 +1,6 @@
 use std::{convert::TryFrom, fmt, num::ParseIntError, rc::Rc};
 
-use super::{Node, N};
+use crate::{Node, N};
 use paste::paste;
 use rust_decimal::Error as DecimalError;
 use serde::Serialize;
