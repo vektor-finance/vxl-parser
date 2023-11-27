@@ -10,9 +10,9 @@ mod n;
 mod node;
 mod numeric;
 mod operation;
+mod result;
 mod string;
 mod tokens;
-mod result;
 
 pub use address::*;
 pub use boolean::*;
@@ -25,6 +25,6 @@ pub use n::*;
 pub use node::*;
 pub use numeric::*;
 pub use operation::*;
+pub use result::*;
 pub use string::*;
 pub use tokens::*;
-pub use result::*;

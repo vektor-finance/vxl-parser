@@ -1,7 +1,7 @@
 use nom_locate::LocatedSpan;
 use nom_tracable::TracableInfo;
 
-use crate::{Node, Error, ErrorKind, Tree};
+use crate::{Error, ErrorKind, Node, Tree};
 
 pub type Span<'a> = LocatedSpan<&'a str, TracableInfo>;
 
