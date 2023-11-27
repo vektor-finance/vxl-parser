@@ -1,7 +1,7 @@
 defmodule VXLParser.MixProject do
   use Mix.Project
 
-  @version "0.0.32"
+  @version "0.0.33"
   @source_url "https://github.com/vektor-finance/vxl-parser"
 
   def project do
