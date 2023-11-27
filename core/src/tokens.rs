@@ -27,23 +27,6 @@ pub struct Function {
   pub args: Vec<Node>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub enum ForLoop {
-  Tuple {
-    binds: Vec<Node>,
-    expr: Rc<Node>,
-    body: Rc<Node>,
-    cond: Option<Rc<Node>>,
-  },
-  Object {
-    binds: Vec<Node>,
-    expr: Rc<Node>,
-    body: Rc<(Node, Node)>,
-    cond: Option<Rc<Node>>,
-    grouping: bool,
-  },
-}
-
 /// Conditional node
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Conditional {
@@ -72,13 +55,6 @@ pub struct BinaryOp {
 pub struct Attribute {
   pub ident: Rc<Node>,
   pub expr: Rc<Node>,
-}
-
-/// Object node
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct ObjectItem {
-  pub key: Rc<Node>,
-  pub val: Rc<Node>,
 }
 
 /// Option node
@@ -243,9 +219,6 @@ pub enum Token {
 
   // Containers
   List(Vec<Node>),
-  Object(Vec<Node>),
-  ObjectItem(ObjectItem),
-  ForLoop(ForLoop),
 
   // Body elements
   LineComment(String),
@@ -311,9 +284,6 @@ impl Token {
   gen_as!(unary_op, Token::UnaryOp(u), &UnaryOp, u);
 
   gen_as!(list, Token::List(l), &Vec<Node>, l);
-  gen_as!(object, Token::Object(o), &Vec<Node>, o);
-  gen_as!(object_item, Token::ObjectItem(oi), &ObjectItem, oi);
-  gen_as!(for_loop, Token::ForLoop(f), &ForLoop, f);
 
   gen_as!(line_comment, Token::LineComment(s), &str, s);
   gen_as!(block_comment, Token::BlockComment(s), &str, s);
@@ -496,20 +466,6 @@ macro_rules! list {
     ($($i:expr),*) => {
         Token::List(vec![$(node!($i),)*])
     };
-}
-
-#[macro_export]
-macro_rules! object_item {
-    ($k:expr => $v:expr) => {
-        Token::ObjectItem(ObjectItem{key: node!(rc $k), val: node!(rc $v)})
-    };
-}
-
-#[macro_export]
-macro_rules! object {
-    ($($k:expr => $v:expr),*) => {
-        Token::Object(vec![$(node!(object_item!($k => $v)),)*])
-    }
 }
 
 #[macro_export]
