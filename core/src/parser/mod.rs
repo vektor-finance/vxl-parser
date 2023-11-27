@@ -1,5 +1,4 @@
 #[macro_use]
-mod tokens;
 mod address;
 mod boolean;
 mod collection;
@@ -12,6 +11,8 @@ mod node;
 mod numeric;
 mod operation;
 mod string;
+mod tokens;
+mod result;
 
 pub use address::*;
 pub use boolean::*;
@@ -26,3 +27,4 @@ pub use numeric::*;
 pub use operation::*;
 pub use string::*;
 pub use tokens::*;
+pub use result::*;

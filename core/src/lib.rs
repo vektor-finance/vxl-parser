@@ -16,14 +16,9 @@ use nom::{
   sequence::{delimited, pair, preceded, separated_pair, terminated, tuple},
   Err,
 };
-use nom_locate::{position, LocatedSpan};
-use nom_tracable::{tracable_parser, TracableInfo};
 
-pub type Span<'a> = LocatedSpan<&'a str, TracableInfo>;
-
-pub type SResult<O, E> = std::result::Result<O, E>;
-pub type Result<'a, I = Span<'a>, O = Node, E = (I, ErrorKind)> = SResult<(I, O), nom::Err<E>>;
-pub type OResult<'a> = SResult<Tree, Box<dyn Error + 'a>>;
+use nom_locate::position;
+use nom_tracable::tracable_parser;
 
 #[tracable_parser]
 fn function_arg(i: Span) -> Result {
@@ -337,6 +332,7 @@ pub fn parse(i: &str) -> OResult {
 #[cfg(test)]
 mod test {
   use crate::*;
+  use nom_tracable::TracableInfo;
   use rstest::{fixture, rstest};
   use std::convert::TryFrom;
 
