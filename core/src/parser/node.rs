@@ -47,8 +47,8 @@ impl Node {
 
 #[cfg(test)]
 mod test {
-  use crate::*;
   use crate::N;
+  use crate::*;
   use rust_decimal::Decimal;
   use std::rc::Rc;
 

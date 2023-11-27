@@ -13,8 +13,8 @@ pub fn line_comment(i: Span) -> Result {
 
 #[cfg(test)]
 mod test {
-  use crate::*;
   use crate::test::{info, Result};
+  use crate::*;
   use nom_tracable::TracableInfo;
 
   use rstest::rstest;
