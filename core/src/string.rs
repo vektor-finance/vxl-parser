@@ -9,10 +9,10 @@ use nom::{
 };
 use nom_tracable::tracable_parser;
 
-use super::{Node, Result, Span, Token};
+use crate::{Node, Result, Span, Token};
 
 #[tracable_parser]
-pub(super) fn single_line_string(i: Span) -> Result {
+pub fn single_line_string(i: Span) -> Result {
   map(
     delimited(
       char('"'),
@@ -25,7 +25,7 @@ pub(super) fn single_line_string(i: Span) -> Result {
 }
 
 #[tracable_parser]
-pub(super) fn string(i: Span) -> Result {
+pub fn string(i: Span) -> Result {
   let (_, head): (_, char) = peek(anychar)(i)?;
   match head {
     '"' => single_line_string(i),
@@ -35,8 +35,8 @@ pub(super) fn string(i: Span) -> Result {
 
 #[cfg(test)]
 mod test {
-  use super::*;
-  use crate::parser::test::{info, Result};
+  use crate::test::{info, Result};
+  use crate::*;
   use nom_tracable::TracableInfo;
 
   use rstest::rstest;

@@ -2,7 +2,7 @@ use nom::{bytes::complete::is_not, character::complete::char, combinator::map, s
 
 use nom_tracable::tracable_parser;
 
-use super::{Node, Result, Span, Token};
+use crate::{Node, Result, Span, Token};
 
 #[tracable_parser]
 pub fn line_comment(i: Span) -> Result {
@@ -13,8 +13,8 @@ pub fn line_comment(i: Span) -> Result {
 
 #[cfg(test)]
 mod test {
-  use super::*;
-  use crate::parser::test::{info, Result};
+  use crate::test::{info, Result};
+  use crate::*;
   use nom_tracable::TracableInfo;
 
   use rstest::rstest;

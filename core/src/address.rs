@@ -8,7 +8,7 @@ use nom_tracable::tracable_parser;
 
 // use bs58::decode;
 
-use super::{Node, Result, Span, Token};
+use crate::{Node, Result, Span, Token};
 
 fn valid_address_char(c: char) -> bool {
   c.is_ascii_hexdigit()
@@ -29,14 +29,14 @@ pub fn address(i: Span) -> Result {
 
 #[cfg(test)]
 mod test {
-  use super::*;
+  use crate::*;
   use nom_tracable::TracableInfo;
   use rstest::{fixture, rstest};
 
-  pub(super) type Result = std::result::Result<(), Box<dyn std::error::Error>>;
+  pub type Result = std::result::Result<(), Box<dyn std::error::Error>>;
 
   #[fixture]
-  pub(super) fn info() -> TracableInfo {
+  pub fn info() -> TracableInfo {
     TracableInfo::default()
   }
 

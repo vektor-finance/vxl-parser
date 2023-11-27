@@ -7,7 +7,7 @@ use nom::{
 
 use nom_tracable::tracable_parser;
 
-use super::{expression, Node, Result, Span, Token};
+use crate::{expression, Node, Result, Span, Token};
 
 #[tracable_parser]
 fn list_end(i: Span) -> Result {
@@ -17,7 +17,7 @@ fn list_end(i: Span) -> Result {
 }
 
 #[tracable_parser]
-pub(super) fn list(i: Span) -> Result {
+pub fn list(i: Span) -> Result {
   let (i, start) = recognize(pair(char('['), multispace0))(i)?;
   // short-circuit empty list
   if let Ok((i, _)) = list_end(i) {
@@ -46,8 +46,8 @@ pub(super) fn list(i: Span) -> Result {
 
 #[cfg(test)]
 mod test {
-  use super::*;
-  use crate::parser::{
+  use crate::*;
+  use crate::{
     test::{info, Result},
     BinaryOp, Operator,
   };

@@ -1,28 +1,27 @@
 use nom::{branch::alt, character::complete::char, combinator::map, sequence::terminated};
 use nom_tracable::tracable_parser;
 
-use super::{n::n, Node, Result, Span, Token};
+use crate::{n, Node, Result, Span, Token};
 
 #[tracable_parser]
-pub(super) fn number(i: Span) -> Result {
+pub fn number(i: Span) -> Result {
   map(n, |num| Node::new(Token::Number(num), &i))(i)
 }
 
 #[tracable_parser]
-pub(super) fn percentage(i: Span) -> Result {
+pub fn percentage(i: Span) -> Result {
   map(terminated(n, char('%')), |pct| Node::new(Token::Percentage(pct), &i))(i)
 }
 
 #[tracable_parser]
-pub(super) fn numeric(i: Span) -> Result {
+pub fn numeric(i: Span) -> Result {
   alt((percentage, number))(i)
 }
 
 #[cfg(test)]
 mod test {
-  use super::*;
-  use crate::parser::test::{info, Result};
-
+  use crate::test::{info, Result};
+  use crate::*;
   use nom_tracable::TracableInfo;
   use rstest::rstest;
 
