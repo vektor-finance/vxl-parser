@@ -11,8 +11,6 @@
 
 - **Purpose**: VXL parser library
 - **Technologies**: [Rust](https://www.rust-lang.org/) with [nom](https://github.com/Geal/nom)
-- **Deployment**: Compiled at build-time by other projects
-- **Where**: [app](https://github.com/vektor-finance/app) and [vektor backend](https://github.com/vektor-finance/vektor)
 
 ## Background
 
@@ -64,8 +62,6 @@ cargo build
 wasm-pack build --dev --scope vektor js
 ```
 
-The [app](https://github.com/vektor-finance/app) project takes care of preparing the package for embedding in the app.
-
 ### Elixir
 
 The compilation and loading is handled by `mix` at build or runtime.
@@ -107,14 +103,6 @@ cargo bench
 Currently, we compile and package the `vxl-parser` using `wasm-pack` which works but has some brittle steps that could be improved.
 
 We rename the package in the outputted `package.json` during a publish step (for convenience sake but necessarily required).
-
-### Optimisations
-
-- [ ] Use [wasm-snip](https://rustwasm.github.io/book/reference/code-size.html#use-the-wasm-snip-tool)
-- [ ] Time profile
-- [ ] Compare [wee_alloc](https://github.com/rustwasm/wee_alloc)
-- [ ] See about switching logging to [console_log](https://github.com/iamcodemaker/console_log)
-- [ ] Test [compilation sizes](https://rustwasm.github.io/book/reference/code-size.html#optimizing-builds-for-code-size)
 
 ## Learn More
 
