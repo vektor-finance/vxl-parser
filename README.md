@@ -3,7 +3,6 @@
 [![rust](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-rust.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-rust.yml)
 [![elixir](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-elixir.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-elixir.yml)
 [![javascript](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-js.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/build-js.yml)
-[![security audit (nightly)](https://github.com/vektor-finance/vxl-parser/actions/workflows/security-audit-nightly.yml/badge.svg)](https://github.com/vektor-finance/vxl-parser/actions/workflows/security-audit-nightly.yml)
 
 [![minimum rustc version](https://img.shields.io/badge/rustc-1.49.0+-lightgray.svg)](#rust-version-requirements)
 
