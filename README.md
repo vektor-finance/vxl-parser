@@ -101,7 +101,7 @@ cargo bench
 
 Currently, we compile and package the `vxl-parser` using `wasm-pack` which works but has some brittle steps that could be improved.
 
-We rename the package in the outputted `package.json` during a publish step (for convenience sake but necessarily required).
+We rename the package in the outputted `package.json` during a publish step (for convenience sake but not necessarily required).
 
 ## Learn More
 
