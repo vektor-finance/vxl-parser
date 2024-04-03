@@ -18,11 +18,11 @@ defmodule VXLParser.MixProject do
 
   defp deps,
     do: [
-      {:jason, "~> 1.0"},
-      {:rustler_precompiled, "~> 0.7.1"},
-      {:rustler, "~> 0.30"},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:excoveralls, "~> 0.18", only: [:test], runtime: false}
+      {:jason, "== 1.4.1"},
+      {:rustler_precompiled, "== 0.7.1"},
+      {:rustler, "== 0.30.0"},
+      {:credo, "== 1.7.1", only: [:dev, :test], runtime: false},
+      {:excoveralls, "== 0.18.0", only: [:test], runtime: false}
     ]
 
   defp package,
