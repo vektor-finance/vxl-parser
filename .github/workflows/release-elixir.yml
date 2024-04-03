@@ -53,8 +53,10 @@ jobs:
         target: ${{ matrix.job.target }}
         nif-version: ${{ matrix.nif }}
         use-cross: ${{ matrix.job.use-cross }}
+        variant: ${{ matrix.job.variant }}
+        cargo-args: ${{ matrix.job.cargo-args }}
+        cross-version: "v0.2.5"
         project-dir: "elixir/vxl_elixir"
-        cargo-args: "--target-dir=target"
 
     - name: Artifact upload
       uses: actions/upload-artifact@v3
