@@ -54,7 +54,7 @@ jobs:
         nif-version: ${{ matrix.nif }}
         use-cross: ${{ matrix.job.use-cross }}
         variant: ${{ matrix.job.variant }}
-        cargo-args: ${{ matrix.job.cargo-args }}
+        cargo-args: "--target-dir=target"
         cross-version: "v0.2.5"
         project-dir: "elixir/vxl_elixir"
 
