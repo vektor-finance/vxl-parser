@@ -55,7 +55,7 @@ jobs:
         use-cross: ${{ matrix.job.use-cross }}
         variant: ${{ matrix.job.variant }}
         cargo-args: "--target-dir=target"
-        cross-version: "v0.2.5"
+        cross-version: "v0.2.4"
         project-dir: "elixir/vxl_elixir"
 
     - name: Artifact upload
