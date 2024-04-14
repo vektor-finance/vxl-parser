@@ -180,7 +180,7 @@ dependencies = [
  "anyhow",
  "clap 3.2.23",
  "core",
- "nom-tracable 0.8.0",
+ "nom-tracable",
  "serde_json",
  "vergen 6.0.2",
 ]
@@ -201,7 +201,7 @@ version = "0.0.33"
 dependencies = [
  "criterion",
  "nom 6.2.1",
- "nom-tracable 0.7.0",
+ "nom-tracable",
  "nom_locate 3.0.2",
  "paste",
  "rstest",
@@ -662,7 +662,6 @@ checksum = "9c5c51b9083a3c620fa67a2a635d1ce7d95b897e957d6b28ff9a5da960a103a6"
 dependencies = [
  "bitvec",
  "funty",
- "lexical-core",
  "memchr",
  "version_check",
 ]
@@ -680,36 +679,14 @@ dependencies = [
 
 [[package]]
 name = "nom-tracable"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "128b58b88f084359e18858edde832830041e0a561d23bb214e656e00972de316"
-dependencies = [
- "nom 6.2.1",
- "nom-tracable-macros 0.7.0",
- "nom_locate 1.0.0",
- "nom_locate 3.0.2",
-]
-
-[[package]]
-name = "nom-tracable"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "02e0d5ea9205a12f87381f7449d43a9ff1dd888af72ef01a858ecccd6d4182de"
 dependencies = [
  "nom 7.1.0",
- "nom-tracable-macros 0.8.0",
+ "nom-tracable-macros",
  "nom_locate 1.0.0",
  "nom_locate 4.0.0",
-]
-
-[[package]]
-name = "nom-tracable-macros"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8416fc5553b00d217b0381929fbce7368935d609afdee46c844e09f962b379e6"
-dependencies = [
- "quote",
- "syn 1.0.109",
 ]
 
 [[package]]

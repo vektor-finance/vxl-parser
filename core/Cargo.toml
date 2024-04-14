@@ -28,7 +28,7 @@ trace = ["nom-tracable/trace"]
 [dependencies]
 nom = { version = "6.2.1", default_features = false, features = ["std"] }
 nom_locate = "3.0.2"
-nom-tracable = "0.7.0"
+nom-tracable = "0.8.0"
 paste = "1.0.6"
 thiserror = "1.0.30"
 serde_with = "1.11.0"
